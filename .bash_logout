@@ -1,5 +1,5 @@
 # ~/.bash_logout
-# Ver 3.0 20151107 zot u1404 + vm
+# Ver 4.0 20161125 zot u1404 + vm
 # echo "*** .bash_logout ***"
 
 if [ -e /vagrant ] ; then

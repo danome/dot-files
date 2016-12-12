@@ -1,17 +1,15 @@
 #!/bin/bash
 # .environment_bash
-# Ver v3.0 20151107 zot u1404 + vm
+# Ver v4.1 20161130 zot u1404 + vm
+#   4.1 change variable setting to -v
+#       add REM_HOST
 # echo "*** environment_bash ***"
 
-if [ "z$ENV_SET" = "ztrue" ]; then
-    return 0
-fi
+if [[ -v ENV_SET ]]; then return 0; fi
 
 export BIN_ARCH CDPATH CLASSPATH
-export CVSPAGER CVS_RSH ENV_SET EXINIT
-export FTP_PROXY ftp_proxy HISTFILE HOST
-export HTTP_PROXY http_proxy INFOPATH
-export MANPATH PERL5LIB USER
+export ENV_SET EXINIT HOST INFOPATH
+export MANPATH USER
 export TEXINPUTS BSTINPUTS BIBINPUTS
 
 #
@@ -33,7 +31,7 @@ if [[ -n ${gs_pid} && -n ${SSH_CLIENT} && "x${OSNAME}" == "xLinux" ]]; then
 fi
 
 # if host hasn't already been set, set it to the host (w/o domain)
-if [ "x$HOST" = "x" ] ; then
+if [[ ! -v HOST ]] ; then
     if [ -x /bin/hostname ]; then		# Linux/HP-UX/sunos4.x boxes
 	hostnamecmd=/bin/hostname
     else
@@ -43,7 +41,13 @@ fi
 HOST=${HOST:-`$hostnamecmd | sed -e 's/\\..*//'`}
 unset hostnamecmd
 
-if [ "x$USER" = "x" ]; then
+if [[ ! -v REM_HOST ]]; then
+    if [[ -v SSH_CLIENT ]]; then
+        REM_HOST=`dig +short -x ${SSH_CLIENT%% *} | cut -d"." -f1`
+    fi
+fi
+
+if [[ ! -v USER ]]; then
     USER=`id | sed -e 's/[^=]*=[0-9]*(\([^)]*\).*/\1/'`
 fi
 
@@ -76,87 +80,25 @@ pathprefix() {
 PATH=`pathset $HOME/.bin/mspgcc/bin $HOME/.bin \
     /usr/gcc-arm-none-eabi-4_9-2016q4/bin \
     /usr/local/bin /usr/local/sbin \
-    /usr/X11/bin   /usr/X11/sbin \
-    /sw/bin        /sw/sbin \
     /usr/bin /usr/sbin /bin /sbin `;
 
 MANPATH=`pathset \
     /usr/gcc-arm-none-eabi-4_9-2016q4/share/doc/gcc-arm-none-eabi/man \
     /usr/local/man /usr/local/share/man \
-    /usr/X11/man   /usr/X11/share/man \
-    /sw/man        /sw/share/man \
-    /usr/X11R6/man /usr/X11R6/share/man \
     /usr/man       /usr/share/man `
 
 INFOPATH=`pathset ~/.emacs.d/info \
     /usr/gcc-arm-none-eabi-4_9-2016q4/share/doc/gcc-arm-none-eabi/info \
     /usr/local/info /usr/local/share/info \
-    /usr/X11/info   /usr/X11/share/info \
-    /sw/info        /sw/share/info \
-    /usr/X11R6/info /usr/X11R6/share/info \
     /usr/info       /usr/share/info `
-
-PERL5LIB=`pathset /sw/lib/perl5 /sw/lib/perl5/darwin `
-
-if [ -r /sw/share/java/classpath ]; then
-  add2classpath=`cat /sw/share/java/classpath`
-  CLASSPATH=`pathset $add2classpath . `
-fi
-
-# read per-package scripts from /sw/etc/profile.d
-if [ -d /sw/etc/profile.d ]; then
-  for i in /sw/etc/profile.d/*.sh ; do
-    if [ -x $i ]; then
-      . $i
-    fi
-  done
-  unset i
-fi
-
-PROXYHTTP=
-PROXYFTP=
-if [ -r /sw/etc/fink.conf ]; then
-    PROXYFTP=`grep ProxyFTP /sw/etc/fink.conf | grep -v "#" | cut -d " " -f2`
-    PROXYHTTP=`grep ProxyHTTP /sw/etc/fink.conf | grep -v "#" | cut -d " " -f2`
-fi
-
-if [ "$PROXYHTTP" != "" ]; then
-  HTTP_PROXY=$PROXYHTTP
-  http_proxy=$PROXYHTTP
-
-  export HTTP_PROXY http_proxy
-fi
-
-if [ "$PROXYFTP" != "" ]; then
-  FTP_PROXY=$PROXYFTP
-  ftp_proxy=$PROXYFTP
-
-  export FTP_PROXY ftp_proxy
-fi
 
 export CDPATH=.:..:$HOME
 
-export CVSPAGER=/bin/cat
-export CVS_RSH=ssh
 export EXINIT='set aw ai ic nows sm'	# set vi (ex) options
-export PRINTER=${PRINTER:-lp}
 export XENVIRONMENT='~/.Xdefaults'
 if [ -x /usr/bin/less ]; then 
     export PAGER=${PAGER:-/usr/bin/less}
 fi
-
-
-# TEXINPUTS, BSTINPUTS, BIBINPUTS
-
-if [ "x$TEXINPUTS" == "x" ]; then
-    # if TEXINPUTS is not set assume none of them are set
-    TEXINPUTS=".:~/.tex:"
-    BSTINPUTS=".:./Bst:~/.tex:~/.tex/Bst:"
-    BIBINPUTS=".:./Bib:~/.tex:~/.tex/Bib:"
-fi
-
-# setenv EMACSLOADPATH "$HOME/.emacs_lib:/sw/packages/mh-e/5.0/share/lisp/:/usr/local/emacs/lisp:"
-# export EMACSLOADPATH="$HOME/.emacs_lib:/usr/share/emacs/20.3/lisp:"
 
 export RSYNC_RSH=ssh
 

@@ -1,5 +1,6 @@
 # .bash_login
-# Ver 3.0 20151106 zot u1404 + vm
+# Ver 4.1 20161125 zot u1404 + vm
+#    add merge Xresources on the way in
 # echo "*** bash_login ***"
 
 export USERNAME=""
@@ -11,6 +12,7 @@ if [ -e /vagrant ] ; then
   export VM=true;
 fi
 
+if [[ -v DISPLAY ]]; then xrdb -merge ~/.Xresources; fi
 if [ "z$OSNAME" = "zDarwin" ] ; then
   if [ -z $VM ] ; then
     stty erase ^\? kill ^x intr ^c tostop werase '^W' reprint '^R' discard '^O'
@@ -27,7 +29,7 @@ else
   fi
 fi
 
-if [ -f $HOME/.bashrc ] ; then . $HOME/.bashrc; fi
+if [ -f $HOME/.bashrc ] ; then source $HOME/.bashrc; fi
 
 #
 # Emacs shell windows use "dumb" as the TERM type.   If reseting it to vt220 screws
