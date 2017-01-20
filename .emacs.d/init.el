@@ -1,5 +1,5 @@
 ;;;
-;;; Ver 4.2 20161816 u1404 zot/rubr + vm
+;;; Ver 4.3 20161816 u1404 zot/rubr + vm
 ;;;
 ;;; 4.1    add various things from gh:marshroyer/emacs-dotfiles
 ;;; 4.2    move to init.el
@@ -7,6 +7,11 @@
 ;;;        add .emacs.d/.init.local.el
 ;;;        move .emacs_lib -> .emacs.d/lib
 ;;;        support for position with large displays and small.
+;;; 4.3    update various org things, todo keywords
+;;;        add gitflow
+;;;        set magit-repository-directories
+;;;        add ido-enter-magit-status to ido-setup-hook
+;;;        add tramp, ido-remove-tramp-from-cache
 ;;;
 
 ;; (if nil
@@ -89,6 +94,34 @@
 (require 'ido)
 (ido-mode 1)
 (setq ido-default-file-method 'selected-window)
+(setq ido-default-buffer-method 'selected-window)
+(add-hook 'ido-setup-hook
+                    (lambda ()
+                      (define-key ido-completion-map
+                        (kbd "C-x g") 'ido-enter-magit-status)))
+
+(defun ido-remove-tramp-from-cache nil
+  "Remove any TRAMP entries from `ido-dir-file-cache'.
+    This stops tramp from trying to connect to remote hosts on emacs startup,
+    which can be very annoying."
+  (interactive)
+  (setq ido-dir-file-cache
+        (cl-remove-if
+         (lambda (x)
+           (string-match "/\\(rsh\\|ssh\\|telnet\\|su\\|sudo\\|sshx\\|krlogin\\|ksu\\|rcp\\|scp\\|rsync\\|scpx\\|fcp\\|nc\\|ftp\\|smb\\|adb\\):" (car x)))
+         ido-dir-file-cache)))
+
+;; redefine `ido-kill-emacs-hook' so that cache is cleaned before being saved
+(defun ido-kill-emacs-hook ()
+  (ido-remove-tramp-from-cache)
+  (ido-save-history))
+
+;;;
+;;; when emacs 25.1 comes along.
+;;;
+;;; (define-key ido-common-completion-map
+;;;            (kbd "C-x g") 'ido-enter-magit-status)
+;;;
 
 ;;;
 ;;; org mode
@@ -98,9 +131,9 @@
 (define-key global-map "\C-ca" 'org-agenda)
 (setq org-log-done 'time)
 (setq org-agenda-files (list "~/.emacs.d/org/tag.org"
-                             "~/.emacs.d/org/working.org"))
+                             "~/.emacs.d/org/Misc.org"))
 (setq org-todo-keywords
-      '((sequence "TODO(t)" "INPROGRESS(i)" "FEEDBACK(f)" "VERIFY(v)" "|" "DONE(d)")))
+      '((sequence "TODO(t)" "INPROGRESS(i)" "WAITING" "FEEDBACK(f)" "VERIFY(v)" "|" "DONE(d)")))
 
 
 ;;; (fset 'yes-or-no-p 'y-or-n-p)
@@ -162,24 +195,32 @@
 (global-set-key "\e\es" 'shell)
 
 ;;;
-;;; version Control, Magit, toolchain, make, gdb stuff
+;;; gdb stuff
+;;; make
+;;; magit
 ;;;
 
 (load "gdbish")
 
-;;;(add-hook 'gdb-mode-hook
-;;;          (function (lambda ()
-;;;                      (local-set-key (kbd "^C^L") 'gdb-redraw))))
-;;;
-;;;(global-set-key "\^C\^L" 'gdb-redraw)
+(add-hook 'gdb-mode-hook
+          (function (lambda ()
+                      (local-set-key (kbd "^C^L") 'gdb-redraw))))
+
 (global-set-key (kbd "<f12>") 'gdb-redraw)
 (global-set-key (kbd "C-X SPC") 'gud-break)
+(global-set-key (kbd "C-C g")   'gdb)
 
 (global-set-key "\^C\^M" 'make)
 (global-set-key (kbd "C-X c") 'compile-with-same-commands)
 
 (global-set-key (kbd "C-X g")   'magit-status)
 (global-set-key (kbd "C-x M-g") 'magit-dispatch-popup)
+
+(require 'magit-gitflow)
+(add-hook 'magit-mode-hook 'turn-on-magit-gitflow)
+(setq magit-repository-directories
+      '(("~/mm/tinyos-main/tinyos-2.x" . 0)
+        ("~/mm/tp-master/tinyos-2.x"   . 0)))
 
 
 ;;;
@@ -233,6 +274,8 @@
 
 (setq c-report-syntactic-errors t)
 (setq c-echo-syntactic-information-p t)
+
+(setq tramp-default-method "ssh")
 
 ;;
 ;; key modifications to suit my tastes (do I have more than one?)
@@ -331,8 +374,8 @@
 ;; other variables
 ;;
 
-(setq split-width-threshold 1)
-(setq split-height-threshold 200)
+(setq split-width-threshold  nil)
+(setq split-height-threshold nil)
 (setq ctl-arrow t)
 (setq-default indent-tabs-mode nil
               tab-width 8)
@@ -380,4 +423,5 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(magit-commit-arguments (quote ("--verbose"))))
+ '(magit-commit-arguments nil)
+ '(magit-log-arguments (quote ("--graph" "--decorate" "-n256"))))

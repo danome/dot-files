@@ -12,9 +12,6 @@ fi
 if [ -x /usr/bin/sudo ]; then
     sudo -k
 fi
-if [ "x$SSH_AGENT_PID" != "x" ] ; then
-    eval `ssh-agent -k`
-fi
 if [ -z $VM ] ; then
   sleep 1
 fi
