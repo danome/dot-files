@@ -1,6 +1,11 @@
 # .bashrc
-# Ver 4.0 20161125 zot u1404 + vm
+# Ver 4.1 20170802 zot u1404 + vm
 # echo "*** bashrc ***"
+
+# delete the following line, and edit EXPECTED_USER
+echo "*** you need to edit EXPECTED_USER, be yourself."
+
+EXPECTED_USER=xyz
 
 if [ "z$UID" != "z`id -u`" ]; then
     export UID=`id -u`
@@ -46,7 +51,7 @@ fi
 
 if [ "x$PS1" != "x" ]; then	# we're interactive
 	who=`id | sed -e "s/uid=[0-9]*(//" -e "s/).*//"`
-	if	[ "x$who" == "xcire" ] || [ "x$who" == "xvagrant" ]; then
+	if	[ "x$who" == "x$EXPECTED_USER" ] || [ "x$who" == "xvagrant" ]; then
 		PS1="\h (\#): "
 	else
 		PS1="($who) \h (\#)# "

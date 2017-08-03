@@ -1,4 +1,7 @@
 # .bash_functions
+# Ver 4.1 20170802 zot u1404
+# Ver 4.0 20170703 zot u1404
+#   4.0 remove older TOSROOTish functions.
 # Ver 3.0 20161130 zot u1404
 #   3.0 add e for emacs with/without REM_HOST
 
@@ -19,49 +22,24 @@ function shssh () {
 }
 
 
-function settos () {
-    export TOSREL="$1"
-    export TOSROOT="$HOME/$TOSREL/tinyos-2.x"
-    export TOSDIR=$TOSROOT/tos
-    export CLASSPATH=".:$TOSROOT/tools/java"
-    shtos
-}
-
-
 function set-d () {
     /bin/rm -f ~/.bin/mspgcc
 }
 
 function shtos () {
-    echo "MOTECOM:       $MOTECOM"
-    echo "TOSROOT:       $TOSROOT"
-    echo "TOSDIR:        $TOSDIR"
-    echo "TOSMAKE_PATH:  $TOSMAKE_PATH"
-    echo "CLASSPATH:     $CLASSPATH"
     echo "MM_ROOT:       $MM_ROOT"
-    echo "MAKERULES:     $MAKERULES"
-    echo ""
+#    echo "MAKERULES:     $MAKERULES"
+#    echo ""
     echo "ROOT_DIR:      $TINYOS_ROOT_DIR"
     echo "ADDITIONAL:    $TINYOS_ROOT_DIR_ADDITIONAL"
     echo "NO_COLOR:      $TOSMAKE_NO_COLOR"
-    echo "" 
+    echo ""
     echo "PACKAGING_DIR: $PACKAGING_DIR"
     echo "POST_VER:      $POST_VER"
     echo "REPO_DIR:      $REPO_DIR"
     echo -e ""
     echo -e "toolchain:"
-    pushd ~/.bin > /dev/null
-    if [ -e mspgcc ]; then
-	ls -ld mspgcc
-    else
-	echo -e "\tdefault"
-    fi
-    hash -r
-    echo
-    msp430-gcc --version | head -1
     arm-none-eabi-gcc --version | head -1
-    echo
-    popd > /dev/null
     pushd ~/mm > /dev/null
 #    ls -ld t2_cur t2_mm
     ls -ld t2_cur
@@ -90,9 +68,3 @@ function tcur () {
     ls -l t2_cur
     popd > /dev/null
 }
-
-
-# function nail () {
-#    iptables -A INPUT -s $1 -j DROP
-#    iptables -A FORWARD -s $1 -j DROP
-#}

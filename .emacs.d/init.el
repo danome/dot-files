@@ -1,5 +1,5 @@
 ;;;
-;;; Ver 4.3 20161816 u1404 zot/rubr + vm
+;;; Ver 4.6 20170414 u1404 zot/rubr + vm
 ;;;
 ;;; 4.1    add various things from gh:marshroyer/emacs-dotfiles
 ;;; 4.2    move to init.el
@@ -12,6 +12,11 @@
 ;;;        set magit-repository-directories
 ;;;        add ido-enter-magit-status to ido-setup-hook
 ;;;        add tramp, ido-remove-tramp-from-cache
+;;; 4.4    add ediff customization
+;;; 4.5    add show-trailing-whitespace and hooks
+;;;        default face white on black
+;;; 4.6    get c indenting to work again (nesc doesn't work anymore)
+;;;        default face black on white.
 ;;;
 
 ;; (if nil
@@ -133,7 +138,7 @@
 (setq org-agenda-files (list "~/.emacs.d/org/tag.org"
                              "~/.emacs.d/org/Misc.org"))
 (setq org-todo-keywords
-      '((sequence "TODO(t)" "INPROGRESS(i)" "WAITING" "FEEDBACK(f)" "VERIFY(v)" "|" "DONE(d)")))
+      '((sequence "TODO(t)" "INPROGRESS(i)" "WAITING(w)" "FEEDBACK(f)" "VERIFY(v)" "|" "DONE(d)" "ABANDONED(a)" )))
 
 
 ;;; (fset 'yes-or-no-p 'y-or-n-p)
@@ -216,11 +221,33 @@
 (global-set-key (kbd "C-X g")   'magit-status)
 (global-set-key (kbd "C-x M-g") 'magit-dispatch-popup)
 
-(require 'magit-gitflow)
-(add-hook 'magit-mode-hook 'turn-on-magit-gitflow)
+;;; (require 'magit-gitflow)
+;;; (add-hook 'magit-mode-hook 'turn-on-magit-gitflow)
+
 (setq magit-repository-directories
       '(("~/mm/tinyos-main/tinyos-2.x" . 0)
         ("~/mm/tp-master/tinyos-2.x"   . 0)))
+
+;;;
+;;; turn on winner mode
+;;;
+
+(when (fboundp 'winner-mode)
+  (winner-mode 1))
+
+;;;
+;;; ediff customization
+;;;
+;;; see https://oremacs.com/2015/01/17/setting-up-ediff/
+;;;
+
+(defmacro csetq (variable value)
+  `(funcall (or (get ',variable 'custom-set)
+                'set-default)
+            ',variable ,value))
+(csetq ediff-window-setup-function 'ediff-setup-windows-plain)
+(csetq ediff-split-window-function 'split-window-horizontally)
+(add-hook 'ediff-after-quit-hook-internal 'winner-undo)
 
 
 ;;;
@@ -233,7 +260,7 @@
 ;;;
 ;;; C/Nesc Editing
 ;;;
-(autoload 'nesc-mode "nesc.el")
+;;; (autoload 'nesc-mode "nesc.el")
 ;;;(add-to-list 'auto-mode-alist '("\\.nc\\'" . nesc-mode))
 (add-to-list 'auto-mode-alist '("\\.nc\\'" . c-mode))
 
@@ -250,8 +277,31 @@
 	       (c-offsets-alist . ((arglist-close . c-lineup-arglist)
                                    (substatement-open . 0)
                                    (case-label        . +)
+                                   (statement-block-intro . +)
                                    (block-open        . 0)))))
 (setq c-default-style "mine")
+(setq-default comment-column 40)
+
+;;;(defun my-c-mode-hook ()
+;;;  (c-set-style "mine"))
+
+;;;(defun my-c-mode-hook ()
+;;;  (c-set-style "mine")
+;;;  (setq c-basic-offset 2
+;;;        c-tab-always-indent t
+;;;        c-auto-align-backslashes t
+;;;        c-offsets-alist '((arglist-close     . c-lineup-arglist)
+;;;                          (substatement-open . 0)
+;;;                          (case-label        . +)
+;;;                          (block-open        . 0)))
+;;;  (c-set-offset 'substatement-open '0) ; brackets should be at same indentation level as the statements they open
+;;;  (c-set-offset 'inline-open '+)
+;;;  (c-set-offset 'block-open '+)
+;;;  (c-set-offset 'brace-list-open '+)   ; all "opens" should be indented by the c-indent-level
+;;;  (c-set-offset 'case-label '+))       ; indent case labels by c-indent-level, too
+
+;;;(add-hook 'c-mode-common-hook 'my-c-mode-hook)
+
 
 ;;;(defconst my-c-style
 ;;;    (c-hanging-braces-alist     . ((substatement-open after)
@@ -370,6 +420,28 @@
 (put 'upcase-region 'disabled t)
 (put 'downcase-region 'disabled t)
 
+;;;
+;;; whitespace
+;;;
+(require 'whitespace)
+(setq-default show-trailing-whitespace t)
+
+(defun no-trailing-whitespace ()
+  (interactive)
+  (setq show-trailing-whitespace nil))
+
+(add-hook 'minibuffer-setup-hook  'no-trailing-whitespace)
+(add-hook 'eww-mode-hook          'no-trailing-whitespace)
+(add-hook 'ielm-mode-hook         'no-trailing-whitespace)
+(add-hook 'gdb-mode-hook          'no-trailing-whitespace)
+(add-hook 'help-mode-hook         'no-trailing-whitespace)
+(add-hook 'Buffer-menu-mode-hook  'no-trailing-whitespace)
+(add-hook 'calendar-mode-hook     'no-trailing-whitespace)
+(add-hook 'shell-mode-hook        'no-trailing-whitespace)
+(add-hook 'magit-popup-mode-hook  'no-trailing-whitespace)
+(add-hook 'compilation-mode-hook  'no-trailing-whitespace)
+(add-hook 'process-menu-mode-hook 'no-trailing-whitespace)
+
 ;;
 ;; other variables
 ;;
@@ -396,9 +468,6 @@
 (setq require-final-newline t)
 (setq truncate-partial-width-windows nil)
 
-(when (fboundp 'winner-mode)
-  (winner-mode 1))
-
 (if (get-buffer "elisp")
     (progn (set-buffer "elisp")
 	   (lisp-interaction-mode)
@@ -412,12 +481,7 @@
 (find-file-read-only "~/.ToDo")
 
 (custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(default ((t (:weight normal :invert t :height 120 :width normal :foundry "unknown" :family "Ubuntu Mono" :slant normal)))))
-;; '(default ((t (:weight normal :inverse-video t :invert t :height 120 :width normal :foundry "unknown" :family "Ubuntu Mono" :slant normal)))))
+ '(default ((t (:inherit nil :stipple nil :background "black" :foreground "white" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 120 :width normal :foundry "unknown" :family "Ubuntu Mono")))))
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

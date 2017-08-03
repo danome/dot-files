@@ -1,6 +1,6 @@
 [user]
-	name = Eric B. Decker
-	email = cire831@gmail.com
+	name = Change Me Please
+	email = nobody@example.com
 [core]
 	editor = emacsclient
 	autocrlf = input
@@ -25,13 +25,3 @@
 	threads = 0
 [push]
 	default = current
-[github]
-	user = cire831
-	token = f3c537f943257b0f96e581e1262229b8
-[giggle]
-	main-window-maximized = false
-	main-window-geometry = 1210x1145+2560+125
-	history-view-vpane-position = 804
-	main-window-view = HistoryView
-	show-graph = true
-	file-view-vpane-position = 1051

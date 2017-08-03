@@ -9,18 +9,24 @@
          (cur-frame (window-frame cur-win))
 ;;;        (disf (window-frame (gdb-frame-disassembly-buffer)))
          (regf   (window-frame (gdb-frame-registers-buffer)))
+         (breakf (window-frame (gdb-frame-breakpoints-buffer)))
          (stackf (window-frame (gdb-frame-stack-buffer))))
+
 ;;;    (set-frame-size     disf 80   60)
 ;;;    (set-frame-position disf 2565 20)
 
     (set-frame-size     regf 30   60)
     (set-frame-position regf 2570 20)
 
+    (set-frame-size     breakf 125   20)
+    (set-frame-position breakf 2834 386)
+
     (set-frame-size     stackf 125  20)
     (set-frame-position stackf 2834 20)
 
     (select-frame-set-input-focus cur-frame)
     (select-window cur-win))
+  (split-window-right)
   (gud-refresh))
 
 ;;;  (gud-refresh)
@@ -44,7 +50,9 @@
   (interactive)
   (let ((regf   (window-frame (gdb-frame-registers-buffer)))
 ;;;     (disf   (window-frame (gdb-frame-disassembly-buffer)))
+        (breakf (window-frame (gdb-frame-breakpoints-buffer)))
         (stackf (window-frame (gdb-frame-stack-buffer))))
-;;; (delete-frame disf)
     (delete-frame regf)
+;;; (delete-frame disf)
+    (delete-frame breakf)
     (delete-frame stackf)))

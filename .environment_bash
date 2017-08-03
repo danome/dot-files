@@ -78,17 +78,17 @@ pathprefix() {
 }
 
 PATH=`pathset $HOME/.bin/mspgcc/bin $HOME/.bin \
-    /usr/gcc-arm-none-eabi-4_9-2016q4/bin \
+    /usr/gcc-arm-none-eabi-4_9-2015q3/bin \
     /usr/local/bin /usr/local/sbin \
     /usr/bin /usr/sbin /bin /sbin `;
 
 MANPATH=`pathset \
-    /usr/gcc-arm-none-eabi-4_9-2016q4/share/doc/gcc-arm-none-eabi/man \
+    /usr/gcc-arm-none-eabi-4_9-2015q3/share/doc/gcc-arm-none-eabi/man \
     /usr/local/man /usr/local/share/man \
     /usr/man       /usr/share/man `
 
 INFOPATH=`pathset ~/.emacs.d/info \
-    /usr/gcc-arm-none-eabi-4_9-2016q4/share/doc/gcc-arm-none-eabi/info \
+    /usr/gcc-arm-none-eabi-4_9-2015q3/share/doc/gcc-arm-none-eabi/info \
     /usr/local/info /usr/local/share/info \
     /usr/info       /usr/share/info `
 
@@ -96,19 +96,14 @@ export CDPATH=.:..:$HOME
 
 export EXINIT='set aw ai ic nows sm'	# set vi (ex) options
 export XENVIRONMENT='~/.Xdefaults'
-if [ -x /usr/bin/less ]; then 
+if [ -x /usr/bin/less ]; then
     export PAGER=${PAGER:-/usr/bin/less}
 fi
 
 export RSYNC_RSH=ssh
 
-export DEBFULLNAME="Eric Decker"
-export DEBEMAIL="cire831@gmail.com"
-
 # ensure that we don't need to reset the environment for any sub-shells
 unset addsw addswman
-
-export GPGKEY=34EC655A
 
 if [ -r ~/.environment_bash.local ]; then . ~/.environment_bash.local; fi
 
