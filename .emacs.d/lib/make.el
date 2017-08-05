@@ -4,3 +4,5 @@
 (setq gud-gdb-command-name "arm-none-eabi-gdb-py -i=mi build/mm6a/main.exe")
 (setq make-command ". ~/.environment_bash; make dev6a")
 (setq gud-gdb-command-name "arm-none-eabi-gdb-py -i=mi build/dev6a/main.exe")
+(setq make-command ". ~/.environment_bash; make dev6a")
+(setq gud-gdb-command-name "arm-none-eabi-gdb-py -i=mi -iex \"target remote localhost:2331\" main.exe")

@@ -17,6 +17,7 @@
 ;;;        default face white on black
 ;;; 4.6    get c indenting to work again (nesc doesn't work anymore)
 ;;;        default face black on white.
+;;; 4.7    nuke banish
 ;;;
 
 ;; (if nil
@@ -148,7 +149,7 @@
 (setq dired-backup-overwrite t)
 (setq backward-delete-char-untabify-method 'all)
 (display-time)
-(mouse-avoidance-mode 'banish)
+;;; (mouse-avoidance-mode 'banish)
 (size-indication-mode t)
 (show-paren-mode t)
 (setq show-paren-style 'mixed)
