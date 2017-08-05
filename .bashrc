@@ -1,9 +1,12 @@
 # .bashrc
-# Ver 4.1 20170802 zot u1404 + vm
+# Ver 4.2 20170805 zot u1404 + vm
 # echo "*** bashrc ***"
 
-# delete the following line, and edit EXPECTED_USER
-echo "*** you need to edit EXPECTED_USER, be yourself."
+
+if [ ! -e /vagrant ]; then
+  # delete the following line, and edit EXPECTED_USER
+  echo "*** you need to edit EXPECTED_USER, be yourself."
+fi
 
 EXPECTED_USER=xyz
 

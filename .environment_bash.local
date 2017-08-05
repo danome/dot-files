@@ -7,10 +7,10 @@ if [ -e /vagrant ] ; then
   HOME_EXTRA="/home"
 fi
 
-export MM_ROOT="${HOME}${HOME_EXTRA}/mm/mm_sensors"
+export MM_ROOT="${MM_ROOT:-${HOME}${HOME_EXTRA}/mm/mm_sensors}"
 
 export TOSMAKE_NO_COLOR=1
-export TINYOS_ROOT_DIR=${HOME}${HOME_EXTRA}/mm/t2_cur/tinyos-2.x
+export TINYOS_ROOT_DIR="$TINYOS_ROOT_DIR:-${HOME}${HOME_EXTRA}/mm/t2_cur/tinyos-2.x}"
 export TINYOS_ROOT_DIR_ADDITIONAL="$MM_ROOT:$TINYOS_ROOT_DIR_ADDITIONAL"
 
 #export LD_LIBRARY_PATH="$M1/lib:/usr/local/lib:$LD_LIBRARY_PATH"
