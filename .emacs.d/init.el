@@ -479,7 +479,7 @@
   nil)
 
 (setq-default major-mode 'indented-text-mode)
-(find-file-read-only "~/.ToDo")
+;;; (find-file-read-only "~/.ToDo")
 
 (custom-set-faces
  '(default ((t (:inherit nil :stipple nil :background "black" :foreground "white" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 120 :width normal :foundry "unknown" :family "Ubuntu Mono")))))
