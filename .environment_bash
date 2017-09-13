@@ -1,7 +1,7 @@
 #!/bin/bash
 # .environment_bash
-# Ver v4.1 20161130 zot u1404 + vm
-# Ver v4.2 20170824 zot u1404 + vm
+# Ver v4.3 20170912 zot u1404 + vm
+#   4.3 add paths for brew coreutils
 #   4.2 make non-interactive exit rather than return
 #   4.1 change variable setting to -v
 #       add REM_HOST
@@ -84,11 +84,13 @@ pathprefix() {
 
 PATH=`pathset $HOME/.bin/mspgcc/bin $HOME/.bin \
     /usr/gcc-arm-none-eabi-4_9-2015q3/bin \
+    /usr/local/opt/coreutils/libexec/gnubin \
     /usr/local/bin /usr/local/sbin \
     /usr/bin /usr/sbin /bin /sbin `;
 
 MANPATH=`pathset \
     /usr/gcc-arm-none-eabi-4_9-2015q3/share/doc/gcc-arm-none-eabi/man \
+    /usr/local/opt/coreutils/libexec/gnuman \
     /usr/local/man /usr/local/share/man \
     /usr/man       /usr/share/man `
 
