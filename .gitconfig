@@ -19,6 +19,7 @@
 	st	= status
 	s 	= status
 	wc	= whatchanged
+	serve = daemon --verbose --export-all --base-path=.git --reuseaddr --strict-paths .git/
 [branch]
 	autosetupmerge = true
 [pack]
