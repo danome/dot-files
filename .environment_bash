@@ -1,11 +1,16 @@
 #!/bin/bash
 # .environment_bash
 # Ver v4.1 20161130 zot u1404 + vm
+# Ver v4.2 20170824 zot u1404 + vm
+#   4.2 make non-interactive exit rather than return
 #   4.1 change variable setting to -v
 #       add REM_HOST
 # echo "*** environment_bash ***"
 
-if [[ -v ENV_SET ]]; then return 0; fi
+if [[ -v ENV_SET ]]; then
+    if [[ -v PS1 ]]; then return 0; fi
+    exit 0;
+fi
 
 export BIN_ARCH CDPATH CLASSPATH
 export ENV_SET EXINIT HOST INFOPATH
