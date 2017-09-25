@@ -3,12 +3,12 @@
 ;;; nevertheless, you probably don't want to edit it.
 ;;; -*- End Of Bookmark File Format Version Stamp -*-
 (("startup.c"
- (filename . "~/mm/mm_sensors/tos/platforms/dev6a/startup.c")
+ (filename . "~/mm/mm/tos/platforms/dev6a/startup.c")
  (front-context-string . "void (* const __")
  (rear-context-string . "_handler\")));\n\n\n")
  (position . 9089))
 ("msp432p401r.h"
- (filename . "~/mm/tp-master/tinyos-2.x/tos/chips/msp432/include/msp432p401r.h")
+ (filename . "~/mm/prod/tos/chips/msp432/include/msp432p401r.h")
  (front-context-string . "typedef enum IRQ")
  (rear-context-string . "**************/\n")
  (position . 4063)
