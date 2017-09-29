@@ -38,6 +38,11 @@ alias	psme='ps -gxu'
 alias	remove='/bin/rm'
 alias	rm='rm -i'
 alias	setlen='eval `resize`'
+
+# turn off touch pad, see xinput
+alias   tpon='xinput --enable 14'
+alias   tpoff='xinput --disable 14'
+
 alias	xdb='od -tx1 -A x'
 alias	xdw='od -tx4 -A x'
 alias	yow='exit'

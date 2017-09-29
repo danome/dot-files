@@ -1,16 +1,20 @@
 #!/bin/sh
-# Ver 3.2 20170802 zot u1404 + vm
+# Ver 3.3 20170928 solaris u1604 + vm
 # echo "*** environment.bash.local ***"
 
 if [ -e /vagrant ] ; then
   export VM=true;
-  HOME_EXTRA="/home"
+  REPO_ROOT="/home/tag"
 fi
 
-export MM_ROOT="${MM_ROOT:-${HOME}${HOME_EXTRA}/mm/mm_sensors}"
+#
+# REPO_ROOT needs to point at the head of the repositories.
+#
+export REPO_ROOT="${REPO_ROOT:-/tag}"
+export MM_ROOT="${MM_ROOT:-${HOME}${REPO_ROOT}/mm}"
 
 export TOSMAKE_NO_COLOR=1
-export TINYOS_ROOT_DIR="$TINYOS_ROOT_DIR:-${HOME}${HOME_EXTRA}/mm/t2_cur/tinyos-2.x}"
+export TINYOS_ROOT_DIR="${TINYOS_ROOT_DIR:-${HOME}${REPO_ROOT}/prod}"
 export TINYOS_ROOT_DIR_ADDITIONAL="$MM_ROOT:$TINYOS_ROOT_DIR_ADDITIONAL"
 
 #export LD_LIBRARY_PATH="$M1/lib:/usr/local/lib:$LD_LIBRARY_PATH"
