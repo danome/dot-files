@@ -1,5 +1,5 @@
 ;;;
-;;; Ver 4.6 20170414 u1404 zot/rubr + vm
+;;; Ver 4.9 20171228 u1404 zot/rubr + vm
 ;;;
 ;;; 4.1    add various things from gh:marshroyer/emacs-dotfiles
 ;;; 4.2    move to init.el
@@ -18,6 +18,10 @@
 ;;; 4.6    get c indenting to work again (nesc doesn't work anymore)
 ;;;        default face black on white.
 ;;; 4.7    nuke banish
+;;; 4.8    add realgud
+;;; 4.9    pdb mode hook to do no-trailing-whitespace
+;;;
+;;; x.x    add python Emacs IDE
 ;;;
 
 ;; (if nil
@@ -67,11 +71,11 @@
         (message "rubr: %s %s" system-name rubr)
         (setq initial-frame-alist
               '((top   .   0) (left   . 1100)
-                (width . 180) (height .   80)))
+                (width . 160) (height .   74)))
         (setq default-frame-alist
               '((top .     0) (left   . 1600)
                 (width . 115) (height .   58)))
-        (set-frame-size (selected-frame) 180 80))
+        (set-frame-size (selected-frame) 160 74))
 
      ((string-equal remote_node skoos-pro)
         (message "skoos-pro")
@@ -98,6 +102,9 @@
 (package-initialize)
 (when (not package-archive-contents)
   (package-refresh-contents))
+
+(load-library "realgud")
+;;; (setq realgud-safe-mode nil)
 
 (require 'ido)
 (ido-mode 1)
@@ -437,6 +444,7 @@
 (add-hook 'eww-mode-hook          'no-trailing-whitespace)
 (add-hook 'ielm-mode-hook         'no-trailing-whitespace)
 (add-hook 'gdb-mode-hook          'no-trailing-whitespace)
+(add-hook 'pdb-mode-hook          'no-trailing-whitespace)
 (add-hook 'help-mode-hook         'no-trailing-whitespace)
 (add-hook 'Buffer-menu-mode-hook  'no-trailing-whitespace)
 (add-hook 'calendar-mode-hook     'no-trailing-whitespace)
