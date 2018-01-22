@@ -103,7 +103,7 @@
 (when (not package-archive-contents)
   (package-refresh-contents))
 
-(load-library "realgud")
+;;; (load-library "realgud")
 ;;; (setq realgud-safe-mode nil)
 
 (require 'ido)
