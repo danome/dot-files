@@ -1,5 +1,5 @@
 # .bashrc
-# Ver 4.2 20170805 zot u1404 + vm
+# Ver 4.3 20180121 zot u1404 + vm
 # echo "*** bashrc ***"
 
 
@@ -54,7 +54,9 @@ fi
 
 if [ "x$PS1" != "x" ]; then	# we're interactive
 	who=`id | sed -e "s/uid=[0-9]*(//" -e "s/).*//"`
-	if	[ "x$who" == "x$EXPECTED_USER" ] || [ "x$who" == "xvagrant" ]; then
+	if	[ "x$who" == "x$EXPECTED_USER" ] ||
+                [ "x$who" == "xvagrant" ]        ||
+                [ "x$who" == "xpi" ]                ; then
 		PS1="\h (\#): "
 	else
 		PS1="($who) \h (\#)# "
