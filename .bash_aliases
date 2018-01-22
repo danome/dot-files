@@ -1,5 +1,5 @@
 # .bash_aliases
-# Ver 3.1 20170802 zot u1404
+# Ver 3.2 20171224 zot u1404
 # set up aliases for various machines
 
 # external hosts
@@ -24,7 +24,6 @@ alias	pd1='pushd +1'
 alias	pd2='pushd +2'
 alias	pd3='pushd +3'
 alias	pd4='pushd +4'
-alias   pti='mspdebug tilib gdb'
 alias	psall='ps -gaxu'
 
 if [ "z$OSNAME" = "zDarwin" ] ; then
@@ -43,6 +42,6 @@ alias	setlen='eval `resize`'
 alias   tpon='xinput --enable 14'
 alias   tpoff='xinput --disable 14'
 
-alias	xdb='od -tx1 -A x'
-alias	xdw='od -tx4 -A x'
+alias	xdb='od -tx1z -A x'
+alias	xdw='od -tx4z -A x'
 alias	yow='exit'

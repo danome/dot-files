@@ -28,8 +28,6 @@ function set-d () {
 
 function shtos () {
     echo "MM_ROOT:       $MM_ROOT"
-#    echo "MAKERULES:     $MAKERULES"
-#    echo ""
     echo "ROOT_DIR:      $TINYOS_ROOT_DIR"
     echo "ADDITIONAL:    $TINYOS_ROOT_DIR_ADDITIONAL"
     echo "NO_COLOR:      $TOSMAKE_NO_COLOR"
@@ -40,9 +38,8 @@ function shtos () {
     echo -e ""
     echo -e "toolchain:"
     arm-none-eabi-gcc --version | head -1
-    pushd ~/mm > /dev/null
-#    ls -ld t2_cur t2_mm
-    ls -ld t2_cur
+    pushd ~/tag > /dev/null
+    ls -ld t2_cur mm_cur
     popd > /dev/null
     echo
 }
