@@ -12,6 +12,7 @@ fi
 #
 export REPO_ROOT="${REPO_ROOT:-/tag}"
 export MM_ROOT="${MM_ROOT:-${HOME}${REPO_ROOT}/mm}"
+export TN_ROOT="${TN_ROOT:-${HOME}${REPO_ROOT}/TagNet}"
 
 export TOSMAKE_NO_COLOR=1
 export TINYOS_ROOT_DIR="${TINYOS_ROOT_DIR:-${HOME}${REPO_ROOT}/prod}"
