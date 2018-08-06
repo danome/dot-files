@@ -12,7 +12,6 @@ if [ -e /vagrant ] ; then
   export VM=true;
 fi
 
-if [[ -v DISPLAY ]]; then xrdb -merge ~/.Xresources; fi
 if [ "z$OSNAME" = "zDarwin" ] ; then
   if [ -z $VM ] ; then
     stty erase ^\? kill ^x intr ^c tostop werase '^W' reprint '^R' discard '^O'
@@ -22,6 +21,7 @@ if [ "z$OSNAME" = "zDarwin" ] ; then
   if [ "z$TERM" = "zlinux" -o "z$TERM" = "zxterm-color" -o "z$TERM" = "zxterm" ] ;
   then export TERM=vt100 ; fi
 else
+  if [[ -v DISPLAY ]]; then xrdb -merge ~/.Xresources; fi
   if [ -z $VM ] ; then
     # Linux, ... , what else?
     stty erase ^\? kill ^x intr ^c tostop werase '^W' cr0 rprnt '^R' flush '^O'
