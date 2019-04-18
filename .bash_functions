@@ -1,9 +1,13 @@
 # .bash_functions
-# Ver 4.1 20170802 zot u1404
-# Ver 4.0 20170703 zot u1404
-#   4.0 remove older TOSROOTish functions.
-# Ver 3.0 20161130 zot u1404
-#   3.0 add e for emacs with/without REM_HOST
+# ver 4.2 20190417 zot u1804
+#   add name function for terminal names
+
+
+# set the name of a gnome-terminal
+function name () {
+    echo -ne "\033]0;$1\007"
+}
+
 
 function e () {
     if [[ -v REM_HOST ]]; then
