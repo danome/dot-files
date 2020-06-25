@@ -98,10 +98,31 @@
 (load "flushish")
 
 (require 'package)
-(add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/") t)
+;; load packages ourselves
+;; press C-h v on the variable for more documentation
+(setq package-enable-at-startup nil)
+;; Add MELPA to package-archives
+(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
+;; load packages now
 (package-initialize)
 (when (not package-archive-contents)
   (package-refresh-contents))
+
+;; Emacs adds `custom' settings in the init file by default. Run this file
+;; without this segment to see what that means.
+;; Put those away in "custom.el".
+(setq custom-file (concat user-emacs-directory "custom.el"))
+(load custom-file :noerror)
+
+;; update local database then install use-package if it's not installed
+(unless (package-installed-p 'use-package)
+ (package-refresh-contents)
+ (package-install 'use-package))
+
+(require 'use-package)
+;; tell use-package to install a package if it's not already installed
+(setq use-package-always-ensure t)
+
 
 ;;; (load-library "realgud")
 ;;; (setq realgud-safe-mode nil)
@@ -501,29 +522,31 @@
  '(magit-commit-arguments nil)
  '(magit-log-arguments (quote ("--graph" "--decorate" "-n256"))))
 
-(require 'package)
-;; load packages ourselves
-;; press C-h v on the variable for more documentation
-(setq package-enable-at-startup nil)
-;; Add MELPA to package-archives
-(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
-;; load packages now
-(package-initialize)
+;; set default font size to 14pt
+;;
+(set-face-attribute 'default nil :height 140)
 
-;; Emacs adds `custom' settings in the init file by default. Run this file
-;; without this segment to see what that means.
-;; Put those away in "custom.el".
-(setq custom-file (concat user-emacs-directory "custom.el"))
-(load custom-file :noerror)
-
-;; update local database then install use-package if it's not installed
-(unless (package-installed-p 'use-package)
- (package-refresh-contents)
- (package-install 'use-package))
-
-(require 'use-package)
-;; tell use-package to install a package if it's not already installed
-(setq use-package-always-ensure t)
-
+;; install magit
+;;
 (use-package magit
- :bind (("C-x g" . magit)))
+  :bind (("C-x g" . magit)))
+
+;; install markdown viewer
+;;
+(use-package markdown-mode
+  :ensure t
+  :commands (markdown-mode gfm-mode)
+  :mode (("README\\.md\\'" . gfm-mode)
+         ("\\.md\\'" . markdown-mode)
+         ("\\.markdown\\'" . markdown-mode))
+  :init (setq markdown-command "multimarkdown"))
+
+;; install markdown preview mode
+;;
+(use-package markdown-preview-mode)
+
+;; Add Clojure support
+;;
+(add-to-list 'package-archives
+                '("melpa-stable" . "http://stable.melpa.org/packages/") t)
+(add-to-list 'package-pinned-packages '(cider . "melpa-stable") t)
