@@ -550,3 +550,29 @@
 (add-to-list 'package-archives
                 '("melpa-stable" . "http://stable.melpa.org/packages/") t)
 (add-to-list 'package-pinned-packages '(cider . "melpa-stable") t)
+
+;; more setup from "Emacs for Clojure" book
+;;
+(use-package tagedit)
+(use-package spinner)
+(use-package smex)
+(use-package sesman)
+(use-package rainbow-delimiters)
+(use-package queue)
+(use-package projectile)
+(use-package pkg-info)
+(use-package parseedn)
+(use-package parseclj)
+(use-package paredit)
+(use-package memoize)
+(use-package magit-popup)
+(use-package ghub)
+(use-package exec-path-from-shell)
+(use-package epl)
+(use-package clojure-mode)
+(use-package clojure-mode-extra-font-locking)
+(use-package cider)
+(use-package a)
+
+
+
