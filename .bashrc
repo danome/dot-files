@@ -3,12 +3,12 @@
 # echo "*** bashrc ***"
 
 
-if [ ! -e /vagrant ]; then
-  # delete the following line, and edit EXPECTED_USER
-  echo "*** you need to edit EXPECTED_USER, be yourself."
-fi
+#if [ ! -e /vagrant ]; then
+#  # delete the following line, and edit EXPECTED_USER
+#  echo "*** you need to edit EXPECTED_USER, be yourself."
+#fi
 
-EXPECTED_USER=xyz
+EXPECTED_USER=danome
 
 if [ "z$UID" != "z`id -u`" ]; then
     export UID=`id -u`
@@ -46,21 +46,21 @@ if ! shopt -oq posix; then
 fi
 
 if [[ -v INSIDE_EMACS ]]; then
-	export EDITOR=emacsclient
-	export VISUAL=emacsclient
-	export CVSPAGER=emacsclient
-	export PAGER=cat
+        export EDITOR=emacsclient
+        export VISUAL=emacsclient
+        export CVSPAGER=emacsclient
+        export PAGER=cat
 fi
 
 if [ "x$PS1" != "x" ]; then	# we're interactive
-	who=`id | sed -e "s/uid=[0-9]*(//" -e "s/).*//"`
-	if	[ "x$who" == "x$EXPECTED_USER" ] ||
+        who=`id | sed -e "s/uid=[0-9]*(//" -e "s/).*//"`
+        if	[ "x$who" == "x$EXPECTED_USER" ] ||
                 [ "x$who" == "xvagrant" ]        ||
                 [ "x$who" == "xpi" ]                ; then
-		PS1="\h (\#): "
-	else
-		PS1="($who) \h (\#)# "
-	fi
+                PS1="\h (\#): "
+        else
+                PS1="($who) \h (\#)# "
+        fi
 fi
 if [ "z$EDITOR" = "z" ]; then
    export	EDITOR=vi

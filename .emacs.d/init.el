@@ -217,9 +217,9 @@
 ;;;
 ;;; Shell stuff
 (add-hook 'shell-mode-hook
-	  (function (lambda ()
-		      (local-unset-key "\C-c\C-m")
-		      )))
+          (function (lambda ()
+                      (local-unset-key "\C-c\C-m")
+                      )))
 (setq shell-popd-regexp "popd\\|p")
 (setq shell-prompt-pattern "^[^#$%>:\n]*[#$%>:] *")
 (setq shell-pushd-regexp "pushd\\|pd")
@@ -301,11 +301,11 @@
 ;; code formatting
 ;;
 (c-add-style "mine"
-	     '("linux"
-	       (c-basic-offset . 2)
-	       (c-tab-always-indent t)
-	       (c-auto-align-backslashes t)
-	       (c-offsets-alist . ((arglist-close . c-lineup-arglist)
+             '("linux"
+               (c-basic-offset . 2)
+               (c-tab-always-indent t)
+               (c-auto-align-backslashes t)
+               (c-offsets-alist . ((arglist-close . c-lineup-arglist)
                                    (substatement-open . 0)
                                    (case-label        . +)
                                    (statement-block-intro . +)
@@ -416,17 +416,17 @@
     mode-line-end-spaces))
 
 (setq-default mode-line-buffer-identification
-	      '(#("%5f " 0 3
+              '(#("%5f " 0 3
    (local-map
     (keymap
      (header-line keymap
-		  (mouse-3 . mode-line-next-buffer)
-		  (down-mouse-3 . ignore)
-		  (mouse-1 . mode-line-previous-buffer)
-		  (down-mouse-1 . ignore))
+                  (mouse-3 . mode-line-next-buffer)
+                  (down-mouse-3 . ignore)
+                  (mouse-1 . mode-line-previous-buffer)
+                  (down-mouse-1 . ignore))
      (mode-line keymap
-		(mouse-3 . mode-line-next-buffer)
-		(mouse-1 . mode-line-previous-buffer)))
+                (mouse-3 . mode-line-next-buffer)
+                (mouse-1 . mode-line-previous-buffer)))
     mouse-face mode-line-highlight help-echo "Buffer name\nmouse-1: previous buffer\nmouse-3: next buffer" face mode-line-buffer-id))))
 
 
@@ -502,8 +502,8 @@
 
 (if (get-buffer "elisp")
     (progn (set-buffer "elisp")
-	   (lisp-interaction-mode)
-	   t)
+           (lisp-interaction-mode)
+           t)
   (set-buffer (get-buffer-create "*scratch*"))
   (lisp-interaction-mode)
   (rename-buffer "elisp")
@@ -575,4 +575,11 @@
 (use-package a)
 
 
-
+;; set default font
+(cond
+ ((string-equal system-type "darwin") ; macOS
+  (when (member "Courier" (font-family-list))
+    (set-frame-font "Courier" t t)))
+ ((string-equal system-type "gnu/linux") ; linux
+  (when (member "Ubuntu Mono Regular" (font-family-list))
+    (set-frame-font "Ubuntu Mono Regular" t t))))
