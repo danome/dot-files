@@ -551,10 +551,25 @@
                 '("melpa-stable" . "http://stable.melpa.org/packages/") t)
 (add-to-list 'package-pinned-packages '(cider . "melpa-stable") t)
 
+;; Add Graphviz support
+;;
+
+;;(unless (package-installed-p 'use-package)
+;;  (package-refresh-contents)
+;;  (package-install 'use-package))
+
+(use-package graphviz-dot-mode
+  :ensure t
+  :config
+  (setq graphviz-dot-indent-width 4))
+
+(use-package company-graphviz-dot
+  )
+
 ;; more setup from "Emacs for Clojure" book
 ;;
 (use-package tagedit)
-(use-package spinner)
+;;(use-package spinner)
 (use-package smex)
 (use-package sesman)
 (use-package rainbow-delimiters)
