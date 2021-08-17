@@ -563,8 +563,7 @@
   :config
   (setq graphviz-dot-indent-width 4))
 
-(use-package company-graphviz-dot
-  )
+;(use-package company-graphviz-dot)
 
 ;; more setup from "Emacs for Clojure" book
 ;;
