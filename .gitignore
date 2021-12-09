@@ -9,3 +9,9 @@ TAGS
 
 # Packaging
 .cask
+/.emacs.d/custom.el
+/.emacs.d/transient/
+/.emacs.d/elpa/
+/.emacs.d/elpy/
+/.emacs.d/ido.last
+/.emacs.d/network-security.data
