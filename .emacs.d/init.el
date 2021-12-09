@@ -597,3 +597,9 @@
  ((string-equal system-type "gnu/linux") ; linux
   (when (member "Ubuntu Mono Regular" (font-family-list))
     (set-frame-font "Ubuntu Mono Regular" t t))))
+
+;; Python Development Envirnoment
+(use-package elpy
+  :ensure t
+  :init
+  (elpy-enable))
