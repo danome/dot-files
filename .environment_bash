@@ -82,12 +82,10 @@ pathprefix() {
     unset d t
 }
 
-PATH=`pathset $HOME/.bin/mspgcc/bin $HOME/.bin \
-    /usr/gcc-arm-none-eabi-4_9-2015q3/bin \
-    /usr/local/opt/coreutils/libexec/gnubin \
-    /opt/X11/bin \
-    /usr/local/bin /usr/local/sbin \
-    /usr/bin /usr/sbin /bin /sbin `
+PATH=`pathset /usr/local/share/graalvm-ce-java17-22.0.0.2/bin \
+              /usr/bin/snap /snap/bin \
+              $HOME/.bin /usr/local/bin /usr/local/sbin \
+              /usr/bin /usr/sbin /bin /sbin `
 
 MANPATH=`pathset \
     /usr/gcc-arm-none-eabi-4_9-2015q3/share/doc/gcc-arm-none-eabi/man \
