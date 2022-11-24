@@ -61,3 +61,4 @@ if [ -z $VM ] ; then
   ssh-add -l
   echo ""
 fi
+. "$HOME/.cargo/env"
