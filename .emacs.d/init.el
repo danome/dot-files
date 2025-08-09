@@ -255,9 +255,8 @@
 ;;; (require 'magit-gitflow)
 ;;; (add-hook 'magit-mode-hook 'turn-on-magit-gitflow)
 
-(setq magit-repository-directories
-      '(("~/mm/tinyos-main/tinyos-2.x" . 0)
-        ("~/mm/tp-master/tinyos-2.x"   . 0)))
+;; (setq magit-repository-directories
+;;       '())
 
 ;;;
 ;;; turn on winner mode
@@ -773,3 +772,37 @@
            ;; uncomment if lldb-mi is not in PATH
            ;; :lldbmipath "path/to/lldb-mi"
            ))))
+
+;; -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+;; GPT related software
+(use-package gpt)
+(require 'gpt)
+;; USE ENV Variable for API key - DO NOT hardcode!
+;; Set OPENAI_API_KEY in your environment
+;;(setq gpt-openai-key (getenv "OPENAI_API_KEY"))
+(setq gpt-openai-engine "gpt-4")
+(setq gpt-openai-use-chat-api t)
+;;(setq gpt-openai-org "personal")  ;; NOT SET
+(setq gpt-openai-max-tokens 2000)
+(setq gpt-openai-temperature 0)
+
+;; org-ai
+;; Set OPENAI_API_KEY environment variable instead of hardcoding
+(setq org-ai-openai-api-token (getenv "OPENAI_API_KEY"))
+(use-package org-ai
+  :ensure t
+  :commands (org-ai-mode
+             org-ai-global-mode)
+  :init
+  (add-hook 'org-mode-hook #'org-ai-mode) ; enable org-ai in org-mode
+  (org-ai-global-mode) ; installs global keybindings on C-c M-a
+  :config
+  (setq org-ai-default-chat-model "gpt-4") ; if you are on the gpt-4 beta:
+  (org-ai-install-yasnippets)) ; if you are using yasnippet and want `ai` snippets
+
+(require gptel)
+(use-package gptel
+ :config
+ ;; Use environment variable for API key - DO NOT hardcode!
+ (setq gptel-api-key (getenv "OPENAI_API_KEY")))
+

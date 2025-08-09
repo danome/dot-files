@@ -14,8 +14,11 @@ fi
 
 if [ "z$OSNAME" = "zDarwin" ] ; then
   if [ -z $VM ] ; then
-    stty erase ^\? kill ^x intr ^c tostop werase '^W' reprint '^R' discard '^O'
-    stty lnext '^V' susp '^Z'
+    # Only run stty if we have a TTY
+    if [ -t 0 ] && [ -t 1 ]; then
+      stty erase ^\? kill ^x intr ^c tostop werase '^W' reprint '^R' discard '^O'
+      stty lnext '^V' susp '^Z'
+    fi
   fi
 # if [ "z$TERM" = "zlinux" ] ; then export TERM=vt100 ; fi
   if [ "z$TERM" = "zlinux" -o "z$TERM" = "zxterm-color" -o "z$TERM" = "zxterm" ] ;
@@ -24,8 +27,11 @@ else
   if [[ -v DISPLAY ]]; then xrdb -merge ~/.Xresources; fi
   if [ -z $VM ] ; then
     # Linux, ... , what else?
-    stty erase ^\? kill ^x intr ^c tostop werase '^W' cr0 rprnt '^R' flush '^O'
-    stty lnext '^V' susp '^Z'
+    # Only run stty if we have a TTY
+    if [ -t 0 ] && [ -t 1 ]; then
+      stty erase ^\? kill ^x intr ^c tostop werase '^W' cr0 rprnt '^R' flush '^O'
+      stty lnext '^V' susp '^Z'
+    fi
   fi
 fi
 
@@ -41,11 +47,11 @@ if [ "z$TERM" != "z" ]; then
     fi
 fi
 if [ "z$TERM" = "z" ] ; then
-  if [ -z $VM ] ; then
+  if [ -z $VM ] && [ -t 0 ] && [ -t 1 ]; then
     eval `tset -Q -s -I vt220`
   fi
 elif [ $TERM = dec-vt100 -o $TERM = dec-vt220 -o $TERM = dec-vt240 ] ; then
-  if [ -z $VM ] ; then
+  if [ -z $VM ] && [ -t 0 ] && [ -t 1 ]; then
     eval `tset -I -s vt220`
   fi
 fi
