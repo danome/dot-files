@@ -41,6 +41,9 @@ TAGS
 /.emacs.d/ido.last
 /.emacs.d/network-security.data
 
+# Claude Code local settings
+.claude/
+
 # General OS/editor noise
 .Trash
 .idea
