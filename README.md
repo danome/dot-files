@@ -144,3 +144,24 @@ Feel free to fork and submit pull requests. Keep changes modular and well-docume
 ## License
 
 MIT License - see LICENSE file for details
+
+## Version 2.0 Modernization Details
+
+This repository underwent a major modernization in January 2025. Here's what was changed:
+
+| Area | Proposed Changes | Actual Implementation |
+|------|-----------------|----------------------|
+| **1. Core Shell Configuration** | Create modular system with `.config/shell/` directory for shared configs | ✅ Created `.config/shell/` with:<br>• `exports.sh` - PATH management, environment variables, XDG settings<br>• `aliases.sh` - 80+ aliases for git, emacs, system commands<br>• `functions.sh` - Helper functions (extract, backup, emacs-daemon management) |
+| **2. Emacs Configuration** | Modernize with use-package, include boon-claude, add early-init, remove duplicates | ✅ Created:<br>• `early-init.el` - Startup optimizations, GC tuning<br>• `init_modern.el` - Clean use-package based config<br>• `lisp/boon-claude.el` - Claude CLI integration<br>• Kept old `init.el` (not replaced yet) |
+| **3. Git Configuration** | Add user-specific includes, global ignores, local settings support | ✅ Replaced `.gitconfig` with:<br>• Modern aliases (30+ shortcuts)<br>• Ediff integration for merge/diff<br>• Include for `~/.gitconfig.local`<br>• Created `.gitignore_global` with 99 lines of common ignores |
+| **4. Development Tools** | Add configs for starship, tmux, SSH template | ❌ Not implemented - focused on core shell/editor configs instead |
+| **5. Installation System** | Rewrite with OS detection, backups, conflict detection, idempotent | ✅ Completely rewrote `install.sh`:<br>• OS detection (macOS/Linux)<br>• Timestamped backups<br>• Color-coded output<br>• Tool checking (git, emacs, cargo, claude)<br>• Symlink management |
+| **6. Files to Remove/Archive** | Remove legacy conda, vagrant, nvm configs | ✅ Removed from new configs:<br>• No conda initialization<br>• No vagrant checks<br>• No nvm references<br>• Created `.gitconfig.old`, `README.md.old` as backups |
+| **7. Documentation** | Update README, add CHANGELOG, structure docs | ✅ Created:<br>• New `README.md` - Complete rewrite with features, structure, customization<br>• `CHANGELOG.md` - Version 2.0.0 documentation<br>• Clear installation/uninstallation instructions |
+
+### Additional Changes Made
+- **Zsh Configuration**: Created `.zshrc`, `.zprofile`, `.zshenv` (not in original bash-centric repo)
+- **Bash Modernization**: Created `.bashrc_modern` and `.bash_profile` for Linux compatibility
+- **Backup Strategy**: Old files renamed with `.old` extension rather than deleted
+
+The implementation closely followed the plan with the exception of development tool configs (starship, tmux) which can be added in a future update if needed.
