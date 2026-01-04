@@ -255,8 +255,8 @@
 ;;; (require 'magit-gitflow)
 ;;; (add-hook 'magit-mode-hook 'turn-on-magit-gitflow)
 
-;; (setq magit-repository-directories
-;;       '())
+(setq magit-repository-directories
+      '(("~/Development/repositories" . 1)))
 
 ;;;
 ;;; turn on winner mode
