@@ -92,7 +92,7 @@
     grep = grep -Ii
     
     # Maintenance
-    cleanup = !git branch --merged | grep -v '\*\|main\|master\|develop' | xargs -n 1 git branch -d
+    cleanup = "!git branch --merged | grep -v '\\*\\|main\\|master\\|develop' | xargs -n 1 git branch -d 2>/dev/null || true"
 
 [rebase]
     autosquash = true
