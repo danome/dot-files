@@ -522,9 +522,9 @@
  '(magit-commit-arguments nil)
  '(magit-log-arguments (quote ("--graph" "--decorate" "-n256"))))
 
-;; set default font size to 14pt
+;; set default font size to 16pt
 ;;
-(set-face-attribute 'default nil :height 140)
+(set-face-attribute 'default nil :height 160)
 
 ;; install magit
 ;;
@@ -589,14 +589,14 @@
 (use-package a)
 
 
-;; set default font
+;; set default font (fixed-width)
 (cond
  ((string-equal system-type "darwin") ; macOS
-  (when (member "Courier" (font-family-list))
-    (set-frame-font "Courier" t t)))
+  (when (member "Menlo" (font-family-list))
+    (set-frame-font "Menlo-16" t t)))
  ((string-equal system-type "gnu/linux") ; linux
-  (when (member "Ubuntu Mono Regular" (font-family-list))
-    (set-frame-font "Ubuntu Mono Regular" t t))))
+  (when (member "Ubuntu Mono" (font-family-list))
+    (set-frame-font "Ubuntu Mono-16" t t))))
 
 ;; Python Development Envirnoment
 (use-package elpy
