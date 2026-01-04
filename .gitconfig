@@ -1,34 +1,106 @@
 [user]
-        name = Daniel J. Maltbie
-        email = dmaltbie@daloma.org
+    name = Dan Maltbie
+    email = 1407008+danome@users.noreply.github.com
+
+[init]
+    defaultBranch = main
+
 [core]
-        editor = emacsclient
-        autocrlf = input
-[alias]
-        b       = branch
-        br	= branch
-        c       = config
-        ci	= commit
-        co	= checkout
-        cp	= cherry-pick
-        d	= diff
-        graph	= log --graph --full-history --all --pretty=format:"%h%x09%d%x20%s"
-        lp	= log -p
-        r       = remote
-        rem	= remote
-        st	= status
-        s       = status
-        wc	= whatchanged
-        serve = daemon --verbose --export-all --base-path=.git --reuseaddr --strict-paths .git/
-[branch]
-        autosetupmerge = true
-[pack]
-        threads = 0
+    editor = emacsclient -c
+    excludesfile = ~/.gitignore_global
+    pager = less -FRX
+    autocrlf = input
+    whitespace = trailing-space,space-before-tab
+
+[color]
+    ui = auto
+    branch = auto
+    diff = auto
+    status = auto
+
 [push]
-        default = current
-[credential "https://github.com"]
-	helper = 
-	helper = !/usr/bin/gh auth git-credential
-[credential "https://gist.github.com"]
-	helper = 
-	helper = !/usr/bin/gh auth git-credential
+    default = current
+    autoSetupRemote = true
+
+[pull]
+    rebase = true
+
+[fetch]
+    prune = true
+
+[merge]
+    tool = ediff
+    conflictstyle = diff3
+
+[mergetool "ediff"]
+    cmd = emacsclient -c --eval "(ediff-merge-files-with-ancestor \"$LOCAL\" \"$REMOTE\" \"$BASE\" nil \"$MERGED\")"
+
+[diff]
+    tool = ediff
+    algorithm = patience
+
+[difftool "ediff"]
+    cmd = emacsclient -c --eval "(ediff-files \"$LOCAL\" \"$REMOTE\")"
+
+[alias]
+    # Status and info
+    st = status -sb
+    s = status -sb
+    
+    # Commits
+    c = commit
+    cm = commit -m
+    ca = commit --amend
+    can = commit --amend --no-edit
+    
+    # Branches
+    b = branch
+    ba = branch -a
+    bd = branch -d
+    bD = branch -D
+    co = checkout
+    cob = checkout -b
+    
+    # Diffs
+    d = diff
+    dc = diff --cached
+    ds = diff --stat
+    
+    # Logs
+    l = log --oneline --graph --decorate
+    lg = log --graph --pretty=format:'%C(yellow)%h%C(reset) %C(blue)%ad%C(reset) %C(green)%an%C(reset) %s%C(red)%d%C(reset)' --date=short
+    ll = log --pretty=format:'%C(yellow)%h%C(reset) %C(blue)%ad%C(reset) %C(green)%an%C(reset) %s' --date=short --numstat
+    
+    # Working with remotes
+    f = fetch
+    fa = fetch --all
+    p = push
+    pl = pull
+    
+    # Stash
+    ss = stash save
+    sl = stash list
+    sp = stash pop
+    sa = stash apply
+    
+    # Reset
+    unstage = reset HEAD --
+    undo = reset HEAD~1 --mixed
+    
+    # Find
+    find = !git ls-files | grep -i
+    grep = grep -Ii
+    
+    # Maintenance
+    cleanup = "!git branch --merged | grep -v '\\*\\|main\\|master\\|develop' | xargs -n 1 git branch -d 2>/dev/null || true"
+
+[rebase]
+    autosquash = true
+    autostash = true
+
+[rerere]
+    enabled = true
+
+# Include local overrides if they exist
+[include]
+    path = ~/.gitconfig.local

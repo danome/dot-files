@@ -255,8 +255,16 @@
 ;;; (require 'magit-gitflow)
 ;;; (add-hook 'magit-mode-hook 'turn-on-magit-gitflow)
 
-;; (setq magit-repository-directories
-;;       '())
+(setq magit-repository-directories
+      '(("~/Development/repositories" . 1)
+        ("~/Development/repositories/ttn" . 1)))
+
+(setq magit-repolist-columns
+      '(("Name"    25 magit-repolist-column-ident nil)
+        ("Branch"  20 magit-repolist-column-branch nil)
+        ("B<U"      3 magit-repolist-column-unpulled-from-upstream nil)
+        ("B>U"      3 magit-repolist-column-unpushed-to-upstream nil)
+        ("Flag"     4 magit-repolist-column-flag nil)))
 
 ;;;
 ;;; turn on winner mode
@@ -470,6 +478,10 @@
 (add-hook 'calendar-mode-hook     'no-trailing-whitespace)
 (add-hook 'shell-mode-hook        'no-trailing-whitespace)
 (add-hook 'magit-popup-mode-hook  'no-trailing-whitespace)
+(add-hook 'magit-repolist-mode-hook 'no-trailing-whitespace)
+(add-hook 'magit-status-mode-hook 'no-trailing-whitespace)
+(add-hook 'magit-log-mode-hook    'no-trailing-whitespace)
+(add-hook 'magit-diff-mode-hook   'no-trailing-whitespace)
 (add-hook 'compilation-mode-hook  'no-trailing-whitespace)
 (add-hook 'process-menu-mode-hook 'no-trailing-whitespace)
 
@@ -521,9 +533,9 @@
  '(magit-commit-arguments nil)
  '(magit-log-arguments (quote ("--graph" "--decorate" "-n256"))))
 
-;; set default font size to 14pt
+;; set default font size to 16pt
 ;;
-(set-face-attribute 'default nil :height 140)
+(set-face-attribute 'default nil :height 160)
 
 ;; install magit
 ;;
@@ -588,14 +600,14 @@
 (use-package a)
 
 
-;; set default font
+;; set default font (fixed-width)
 (cond
  ((string-equal system-type "darwin") ; macOS
-  (when (member "Courier" (font-family-list))
-    (set-frame-font "Courier" t t)))
+  (when (member "Menlo" (font-family-list))
+    (set-frame-font "Menlo-16" t t)))
  ((string-equal system-type "gnu/linux") ; linux
-  (when (member "Ubuntu Mono Regular" (font-family-list))
-    (set-frame-font "Ubuntu Mono Regular" t t))))
+  (when (member "Ubuntu Mono" (font-family-list))
+    (set-frame-font "Ubuntu Mono-16" t t))))
 
 ;; Python Development Envirnoment
 (use-package elpy
@@ -800,8 +812,8 @@
   (setq org-ai-default-chat-model "gpt-4") ; if you are on the gpt-4 beta:
   (org-ai-install-yasnippets)) ; if you are using yasnippet and want `ai` snippets
 
-(require gptel)
 (use-package gptel
+ :ensure t
  :config
  ;; Use environment variable for API key - DO NOT hardcode!
  (setq gptel-api-key (getenv "OPENAI_API_KEY")))

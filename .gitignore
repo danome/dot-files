@@ -21,6 +21,7 @@
 *.tmp
 *.swp
 .DS_Store
+._*
 
 *.[oa]
 *~
@@ -39,3 +40,19 @@ TAGS
 /.emacs.d/elpy/
 /.emacs.d/ido.last
 /.emacs.d/network-security.data
+
+# Claude Code local settings
+.claude/
+
+# General OS/editor noise
+.Trash
+.idea
+.vscode
+.direnv
+.env
+.env.local
+.venv
+node_modules
+dist
+build
+target
