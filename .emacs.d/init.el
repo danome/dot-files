@@ -256,8 +256,7 @@
 ;;; (add-hook 'magit-mode-hook 'turn-on-magit-gitflow)
 
 (setq magit-repository-directories
-      '(("~/Development/repositories" . 1)
-        ("~/Development/repositories/ttn" . 1)))
+      '(("~/development/repositories" . 2)))
 
 (setq magit-repolist-columns
       '(("Name"    25 magit-repolist-column-ident nil)
