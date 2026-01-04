@@ -259,6 +259,13 @@
       '(("~/Development/repositories" . 1)
         ("~/Development/repositories/ttn" . 1)))
 
+(setq magit-repolist-columns
+      '(("Name"    25 magit-repolist-column-ident nil)
+        ("Branch"  20 magit-repolist-column-branch nil)
+        ("B<U"      3 magit-repolist-column-unpulled-from-upstream nil)
+        ("B>U"      3 magit-repolist-column-unpushed-to-upstream nil)
+        ("Flag"     4 magit-repolist-column-flag nil)))
+
 ;;;
 ;;; turn on winner mode
 ;;;
