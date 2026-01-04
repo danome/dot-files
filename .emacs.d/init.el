@@ -478,6 +478,10 @@
 (add-hook 'calendar-mode-hook     'no-trailing-whitespace)
 (add-hook 'shell-mode-hook        'no-trailing-whitespace)
 (add-hook 'magit-popup-mode-hook  'no-trailing-whitespace)
+(add-hook 'magit-repolist-mode-hook 'no-trailing-whitespace)
+(add-hook 'magit-status-mode-hook 'no-trailing-whitespace)
+(add-hook 'magit-log-mode-hook    'no-trailing-whitespace)
+(add-hook 'magit-diff-mode-hook   'no-trailing-whitespace)
 (add-hook 'compilation-mode-hook  'no-trailing-whitespace)
 (add-hook 'process-menu-mode-hook 'no-trailing-whitespace)
 
