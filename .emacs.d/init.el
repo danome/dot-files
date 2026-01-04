@@ -800,7 +800,7 @@
   (setq org-ai-default-chat-model "gpt-4") ; if you are on the gpt-4 beta:
   (org-ai-install-yasnippets)) ; if you are using yasnippet and want `ai` snippets
 
-(require gptel)
+(require 'gptel)
 (use-package gptel
  :config
  ;; Use environment variable for API key - DO NOT hardcode!
