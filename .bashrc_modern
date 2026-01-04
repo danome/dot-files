@@ -1,0 +1,78 @@
+#!/usr/bin/env bash
+# Modern .bashrc configuration
+
+# If not running interactively, don't do anything
+[[ $- != *i* ]] && return
+
+# History options
+shopt -s histappend
+shopt -s checkwinsize
+shopt -s cdspell
+shopt -s dirspell
+shopt -s autocd
+
+# History settings
+export HISTCONTROL=ignoreboth:erasedups
+export HISTSIZE=10000
+export HISTFILESIZE=20000
+export HISTTIMEFORMAT="%F %T "
+
+# Bash completion
+if ! shopt -oq posix; then
+  if [ -f /usr/share/bash-completion/bash_completion ]; then
+    . /usr/share/bash-completion/bash_completion
+  elif [ -f /etc/bash_completion ]; then
+    . /etc/bash_completion
+  elif [ -f /opt/homebrew/etc/profile.d/bash_completion.sh ]; then
+    . /opt/homebrew/etc/profile.d/bash_completion.sh
+  fi
+fi
+
+# Enable color support
+if [ -x /usr/bin/dircolors ]; then
+    test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
+fi
+
+# macOS color support
+if [[ "$OSTYPE" == "darwin"* ]]; then
+    export CLICOLOR=1
+    export LSCOLORS=ExFxBxDxCxegedabagacad
+fi
+
+# Source shared configurations
+CONFIG_DIR="${HOME}/.config/shell"
+[[ -f "${CONFIG_DIR}/exports.sh" ]] && source "${CONFIG_DIR}/exports.sh"
+[[ -f "${CONFIG_DIR}/aliases.sh" ]] && source "${CONFIG_DIR}/aliases.sh"
+[[ -f "${CONFIG_DIR}/functions.sh" ]] && source "${CONFIG_DIR}/functions.sh"
+
+# Local overrides
+[[ -f "${CONFIG_DIR}/local.sh" ]] && source "${CONFIG_DIR}/local.sh"
+
+# Development paths
+[[ -f "${CONFIG_DIR}/development.sh" ]] && source "${CONFIG_DIR}/development.sh"
+
+# Cargo/Rust
+[[ -f "$HOME/.cargo/env" ]] && source "$HOME/.cargo/env"
+
+# Simple prompt if PS1 not already customized
+if [[ "$PS1" == *"@"* ]]; then
+    # Keep existing prompt
+    :
+else
+    # Color prompt
+    if [ "$TERM" != "dumb" ]; then
+        PS1='\[\e[32m\]\u@\h\[\e[0m\]:\[\e[34m\]\w\[\e[0m\]\$ '
+    else
+        PS1='\u@\h:\w\$ '
+    fi
+fi
+
+# Start Emacs daemon if not running (and not inside Emacs)
+if [[ -z "$INSIDE_EMACS" ]]; then
+    if ! pgrep -f "emacs --daemon" > /dev/null 2>&1; then
+        emacs --daemon 2>/dev/null &
+    fi
+fi
+
+# Local bash customizations
+[[ -f "$HOME/.bashrc.local" ]] && source "$HOME/.bashrc.local"

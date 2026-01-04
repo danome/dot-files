@@ -1,0 +1,34 @@
+[user]
+        name = Daniel J. Maltbie
+        email = dmaltbie@daloma.org
+[core]
+        editor = emacsclient
+        autocrlf = input
+[alias]
+        b       = branch
+        br	= branch
+        c       = config
+        ci	= commit
+        co	= checkout
+        cp	= cherry-pick
+        d	= diff
+        graph	= log --graph --full-history --all --pretty=format:"%h%x09%d%x20%s"
+        lp	= log -p
+        r       = remote
+        rem	= remote
+        st	= status
+        s       = status
+        wc	= whatchanged
+        serve = daemon --verbose --export-all --base-path=.git --reuseaddr --strict-paths .git/
+[branch]
+        autosetupmerge = true
+[pack]
+        threads = 0
+[push]
+        default = current
+[credential "https://github.com"]
+	helper = 
+	helper = !/usr/bin/gh auth git-credential
+[credential "https://gist.github.com"]
+	helper = 
+	helper = !/usr/bin/gh auth git-credential
