@@ -532,9 +532,9 @@
  '(magit-commit-arguments nil)
  '(magit-log-arguments (quote ("--graph" "--decorate" "-n256"))))
 
-;; set default font size to 16pt
+;; set default font size to 14pt
 ;;
-(set-face-attribute 'default nil :height 160)
+(set-face-attribute 'default nil :height 140)
 
 ;; install magit
 ;;
@@ -623,10 +623,10 @@ blockquote { border-left: 3px solid #ccc; margin-left: 0; padding-left: 20px; co
 (cond
  ((string-equal system-type "darwin") ; macOS
   (when (member "Menlo" (font-family-list))
-    (set-frame-font "Menlo-16" t t)))
+    (set-frame-font "Menlo-14" t t)))
  ((string-equal system-type "gnu/linux") ; linux
   (when (member "Ubuntu Mono" (font-family-list))
-    (set-frame-font "Ubuntu Mono-16" t t))))
+    (set-frame-font "Ubuntu Mono-14" t t))))
 
 ;; Python Development Envirnoment
 (use-package elpy
