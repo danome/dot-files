@@ -256,7 +256,7 @@
 ;;; (add-hook 'magit-mode-hook 'turn-on-magit-gitflow)
 
 (setq magit-repository-directories
-      '(("~/development/repositories" . 2)))
+      `((,(expand-file-name "~/development/repositories") . 3)))
 
 (setq magit-repolist-columns
       '(("Name"    25 magit-repolist-column-ident nil)
@@ -554,6 +554,26 @@
 ;; install markdown preview mode
 ;;
 (use-package markdown-preview-mode)
+
+;; Markdown preview using eww (in-buffer)
+(defun markdown-preview-eww ()
+  "Preview markdown in eww buffer."
+  (interactive)
+  (let* ((output-file (make-temp-file "md-preview-" nil ".html"))
+         (html (format "<!DOCTYPE html>
+<html><head>
+<style>
+body { font-family: sans-serif; max-width: 800px; margin: 20px auto; padding: 0 20px; line-height: 1.6; }
+pre { background: #f4f4f4; padding: 10px; overflow-x: auto; }
+code { background: #f4f4f4; padding: 2px 5px; }
+blockquote { border-left: 3px solid #ccc; margin-left: 0; padding-left: 20px; color: #666; }
+</style>
+</head><body>%s</body></html>" (markdown-export-to-string))))
+    (with-temp-file output-file (insert html))
+    (eww-open-file output-file)))
+
+(with-eval-after-load 'markdown-mode
+  (define-key markdown-mode-map (kbd "C-c C-v") 'markdown-preview-eww))
 
 ;; Add Clojure support
 ;;
