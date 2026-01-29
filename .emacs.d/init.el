@@ -91,7 +91,6 @@
 
 (setq load-path (append (list "~/.emacs.d/lib") load-path))
 (load "misc")
-(load "make")
 (load "uniquify")
 (setq uniquify-buffer-name-style 'forward)
 
@@ -231,25 +230,10 @@
 (global-set-key "\e\es" 'shell)
 
 ;;;
-;;; gdb stuff
-;;; make
 ;;; magit
 ;;;
 
-(load "gdbish")
-
-(add-hook 'gdb-mode-hook
-          (function (lambda ()
-                      (local-set-key (kbd "^C^L") 'gdb-redraw))))
-
-(global-set-key (kbd "<f12>") 'gdb-redraw)
-(global-set-key (kbd "C-X SPC") 'gud-break)
-(global-set-key (kbd "C-C g")   'gdb)
-
-(global-set-key "\^C\^M" 'make)
-(global-set-key (kbd "C-X c") 'compile-with-same-commands)
-
-(global-set-key (kbd "C-X g")   'magit-status)
+(global-set-key (kbd "C-x g")   'magit-status)
 (global-set-key (kbd "C-x M-g") 'magit-dispatch-popup)
 
 ;;; (require 'magit-gitflow)
