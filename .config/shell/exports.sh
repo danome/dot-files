@@ -20,6 +20,13 @@ else
   PATH_HOMEBREW=""
 fi
 
+# Snap (Linux)
+if [ "$OS_TYPE" = "Linux" ] && [ -d "/snap/bin" ]; then
+  PATH_SNAP="/snap/bin"
+else
+  PATH_SNAP=""
+fi
+
 # User paths
 PATH_USER="$HOME/bin:$HOME/.local/bin:$HOME/.cargo/bin"
 
@@ -28,7 +35,7 @@ dedup_path() {
   awk -v RS=: '!seen[$0]++ {printf "%s%s", sep, $0; sep=":"}'
 }
 
-export PATH="$(printf "%s:%s:%s" "$PATH_HOMEBREW" "$PATH_USER" "$PATH_BASE" | dedup_path)"
+export PATH="$(printf "%s:%s:%s:%s" "$PATH_HOMEBREW" "$PATH_SNAP" "$PATH_USER" "$PATH_BASE" | dedup_path)"
 
 export LANG="en_US.UTF-8"
 export LC_ALL="en_US.UTF-8"
@@ -56,3 +63,8 @@ export CARGO_BUILD_JOBS="${CARGO_BUILD_JOBS:-3}"
 export XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
 export XDG_CACHE_HOME="${XDG_CACHE_HOME:-$HOME/.cache}"
 export XDG_DATA_HOME="${XDG_DATA_HOME:-$HOME/.local/share}"
+
+# NVM (Node Version Manager)
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"

@@ -88,19 +88,22 @@ export NVM_DIR="$HOME/.nvm"
 
 # >>> conda initialize >>>
 # !! Contents within this block are managed by 'conda init' !!
-__conda_setup="$('/home/danome/Python-dev/anaconda3/bin/conda' 'shell.bash' 'hook' 2> /dev/null)"
+# Modified to use $HOME for portability
+__conda_setup="$("$HOME/Python-dev/anaconda3/bin/conda" 'shell.bash' 'hook' 2> /dev/null)"
 if [ $? -eq 0 ]; then
     eval "$__conda_setup"
 else
-    if [ -f "/home/danome/Python-dev/anaconda3/etc/profile.d/conda.sh" ]; then
-        . "/home/danome/Python-dev/anaconda3/etc/profile.d/conda.sh"
+    if [ -f "$HOME/Python-dev/anaconda3/etc/profile.d/conda.sh" ]; then
+        . "$HOME/Python-dev/anaconda3/etc/profile.d/conda.sh"
     else
-        export PATH="/home/danome/Python-dev/anaconda3/bin:$PATH"
+        export PATH="$HOME/Python-dev/anaconda3/bin:$PATH"
     fi
 fi
 unset __conda_setup
 # <<< conda initialize <<<
 
-# Alias for Cursor AppImage
-alias cursor='/home/danome/Software/Cursor-1.3.7-x86_64.AppImage --no-sandbox' 
+# Alias for Cursor AppImage (Linux only)
+if [ -f "$HOME/Software/Cursor-1.3.7-x86_64.AppImage" ]; then
+    alias cursor="$HOME/Software/Cursor-1.3.7-x86_64.AppImage --no-sandbox"
+fi 
 
