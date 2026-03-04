@@ -85,7 +85,34 @@
         (setq default-frame-alist
               '((top .     0) (left   .  780)
                 (width . 110) (height .   58)))
-        (set-frame-size (selected-frame) 100 50)))))
+        (set-frame-size (selected-frame) 100 50))
+
+     (t  ; default for unrecognized hosts — detect primary monitor
+        (message "default frame: %s" system-name)
+        (let* ((primary (shell-command-to-string
+                         "xrandr | grep ' connected primary' | grep -oP '\\d+x\\d+\\+\\d+\\+\\d+'"))
+               (parts (and (> (length primary) 0)
+                           (split-string (string-trim primary) "[x+]")))
+               (mon-w   (if parts (string-to-number (nth 0 parts)) (display-pixel-width)))
+               (mon-h   (if parts (string-to-number (nth 1 parts)) (display-pixel-height)))
+               (mon-x   (if parts (string-to-number (nth 2 parts)) 0))
+               (mon-y   (if parts (string-to-number (nth 3 parts)) 0))
+               (char-w  (frame-char-width))
+               (char-h  (frame-char-height))
+               (max-cols (/ mon-w char-w))
+               (max-rows (/ mon-h char-h))
+               (init-w (min 120 (- max-cols 4)))
+               (init-h (min 40  (- max-rows 4)))
+               (def-w  (min 110 (- max-cols 4)))
+               (def-h  (min 40  (- max-rows 4))))
+          (setq initial-frame-alist
+                `((top   . ,mon-y) (left   . ,mon-x)
+                  (width . ,init-w) (height . ,init-h)))
+          (setq default-frame-alist
+                `((top . ,mon-y) (left   . ,mon-x)
+                  (width . ,def-w) (height . ,def-h)))
+          (set-frame-size (selected-frame) init-w init-h)
+          (set-frame-position (selected-frame) mon-x mon-y))))))
 
 ;;;(set-frame-font "-adobe-courier-medium-r-normal--14-180-75-75-m-110-iso8859-1")
 
@@ -516,9 +543,9 @@
  '(magit-commit-arguments nil)
  '(magit-log-arguments (quote ("--graph" "--decorate" "-n256"))))
 
-;; set default font size to 14pt
+;; set default font size to 16pt
 ;;
-(set-face-attribute 'default nil :height 140)
+(set-face-attribute 'default nil :height 160)
 
 ;; install magit
 ;;
@@ -607,10 +634,10 @@ blockquote { border-left: 3px solid #ccc; margin-left: 0; padding-left: 20px; co
 (cond
  ((string-equal system-type "darwin") ; macOS
   (when (member "Menlo" (font-family-list))
-    (set-frame-font "Menlo-14" t t)))
+    (set-frame-font "Menlo-16" t t)))
  ((string-equal system-type "gnu/linux") ; linux
   (when (member "Ubuntu Mono" (font-family-list))
-    (set-frame-font "Ubuntu Mono-14" t t))))
+    (set-frame-font "Ubuntu Mono-16" t t))))
 
 ;; Python Development Envirnoment
 (use-package elpy
