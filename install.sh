@@ -33,6 +33,7 @@ GIT_FILES=(
 
 CONFIG_DIRS=(
     ".config/shell"
+    ".config/kitty"
 )
 
 echo -e "${GREEN}=== Dot-files Installation ===${NC}"

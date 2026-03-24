@@ -74,5 +74,8 @@ if [[ -z "$INSIDE_EMACS" ]]; then
     fi
 fi
 
+# Kitty shell hooks (background tint + dynamic title)
+[[ -f "${HOME}/.config/kitty/kitty-shell-hooks.sh" ]] && source "${HOME}/.config/kitty/kitty-shell-hooks.sh"
+
 # Local bash customizations
 [[ -f "$HOME/.bashrc.local" ]] && source "$HOME/.bashrc.local"
