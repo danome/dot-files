@@ -153,6 +153,27 @@
 ;;; (load-library "realgud")
 ;;; (setq realgud-safe-mode nil)
 
+;; Start Emacs server for emacsclient
+(use-package server
+  :ensure nil
+  :config
+  (unless (server-running-p)
+    (server-start)))
+
+;; Which-key - show available keybindings as you type
+(use-package which-key
+  :config
+  (which-key-mode 1)
+  (setq which-key-idle-delay 0.5))
+
+;; Highlight current line
+(global-hl-line-mode 1)
+
+;; Smoother scrolling
+(setq scroll-margin 3
+      scroll-conservatively 100
+      scroll-preserve-screen-position t)
+
 (require 'ido)
 (ido-mode 1)
 (setq ido-default-file-method 'selected-window)
@@ -161,6 +182,18 @@
                     (lambda ()
                       (define-key ido-completion-map
                         (kbd "C-x g") 'ido-enter-magit-status)))
+
+;; Better IDO with fuzzy matching and vertical display
+(use-package flx-ido
+  :after ido
+  :config
+  (flx-ido-mode 1))
+
+(use-package ido-vertical-mode
+  :after ido
+  :config
+  (ido-vertical-mode 1)
+  (setq ido-vertical-define-keys 'C-n-and-C-p-only))
 
 (defun ido-remove-tramp-from-cache nil
   "Remove any TRAMP entries from `ido-dir-file-cache'.
@@ -393,7 +426,7 @@
 ;; Add a keystroke for renaming a buffer
 (global-set-key "\C-cr" 'rename-buffer)
 
-(global-set-key "\^X\^B" 'buffer-menu)
+(global-set-key "\^X\^B" 'ibuffer)
 ;;; (global-set-key "\^X\^C" 'give-info-about-exit)
 (global-set-key "\^X]"	 'next-page-top)
 (global-set-key "\^Xl" 'goto-line)
@@ -402,6 +435,22 @@
 
 (global-set-key "\e?" 'apropos)
 (global-set-key "\e]" 'forward-paragraph)
+
+;; Shift+arrow to move between windows
+(windmove-default-keybindings)
+
+;; Duplicate current line
+(defun duplicate-line ()
+  "Duplicate current line."
+  (interactive)
+  (let ((col (current-column)))
+    (move-beginning-of-line 1)
+    (kill-line)
+    (yank)
+    (newline)
+    (yank)
+    (move-to-column col)))
+(global-set-key (kbd "C-c d") 'duplicate-line)
 
 ;;
 ;; mode line
@@ -557,9 +606,9 @@
 (use-package markdown-mode
   :ensure t
   :commands (markdown-mode gfm-mode)
-  :mode (("README\\.md\\'" . gfm-mode)
-         ("\\.md\\'" . markdown-mode)
-         ("\\.markdown\\'" . markdown-mode))
+  :mode (("README\\.md\\'" . gfm-view-mode)
+         ("\\.md\\'" . markdown-view-mode)
+         ("\\.markdown\\'" . markdown-view-mode))
   :init (setq markdown-command "multimarkdown"))
 
 ;; install markdown preview mode
