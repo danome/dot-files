@@ -67,12 +67,6 @@ else
     fi
 fi
 
-# Start Emacs daemon if not running (and not inside Emacs)
-if [[ -z "$INSIDE_EMACS" ]]; then
-    if ! pgrep -f "emacs --daemon" > /dev/null 2>&1; then
-        emacs --daemon 2>/dev/null &
-    fi
-fi
 
 # Kitty shell hooks (background tint + dynamic title)
 [[ -f "${HOME}/.config/kitty/kitty-shell-hooks.sh" ]] && source "${HOME}/.config/kitty/kitty-shell-hooks.sh"

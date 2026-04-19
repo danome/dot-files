@@ -37,17 +37,11 @@ alias gd='git diff'
 alias gdc='git diff --cached'
 
 # Emacs
-alias e='emacsclient -n'
-alias ec='emacsclient -c'
-alias et='emacsclient -t'
-alias es='emacsclient -n ~/.emacs.d/init.el'
-alias emacs-config='emacsclient -n ~/.emacs.d/init.el'
-
-# Emacs daemon management
-alias eds='emacs-daemon-status'
-alias edstart='emacs-daemon-start'
-alias edstop='emacs-daemon-stop'
-alias edrestart='emacs-daemon-restart'
+alias e='emacs-gui-open'
+alias ec='emacs-gui-open'
+alias et='emacs-client-open -t'
+alias es='emacs-gui-open ~/.emacs.d/init.el'
+alias emacs-config='emacs-gui-open ~/.emacs.d/init.el'
 
 # Python
 alias py='python3'

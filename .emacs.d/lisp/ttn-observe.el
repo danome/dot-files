@@ -8,8 +8,6 @@
 ;; This file provides Emacs integration for the ttn binary.
 ;; It loosely refers to ttn-docs for version tracking purposes.
 
-(require 'transient nil t)
-
 (defgroup ttn-observe nil
   "TTN Network Observation options."
   :group 'tools)
@@ -33,11 +31,23 @@
 
 (defun ttn-observe--call (args)
   "Call ttn binary with ARGS and return output."
-  (with-temp-buffer
-    (let ((exit (apply #'call-process ttn-bin nil t nil "observe" args)))
-      (if (and (integerp exit) (= exit 0))
-          (buffer-string)
-        (format "Error calling `ttn observe %s` (exit=%s)." (car args) exit)))))
+  (let ((ttn-exec (or (executable-find ttn-bin)
+                      (and (file-exists-p ttn-bin) ttn-bin))))
+    (if (not ttn-exec)
+        (format "TTN binary not found: %s" ttn-bin)
+      (with-temp-buffer
+        (condition-case err
+            (let ((exit (apply #'call-process ttn-exec nil t nil "observe" args)))
+              (if (and (integerp exit) (= exit 0))
+                  (buffer-string)
+                (format "Error calling `ttn observe %s` (exit=%s):\n\n%s"
+                        (car args)
+                        exit
+                        (string-trim (buffer-string)))))
+          (error
+           (format "Error calling `ttn observe %s`:\n\n%s"
+                   (car args)
+                   (error-message-string err))))))))
 
 (defun ttn-observe--display (buffer-name title content)
   "Display CONTENT in buffer named BUFFER-NAME with TITLE."
@@ -48,7 +58,7 @@
         (ttn-observe-mode)
         (insert content)
         (goto-char (point-min))))
-    (display-buffer buf)))
+    (pop-to-buffer buf)))
 
 ;;;###autoload
 (defun ttn-status ()
@@ -94,18 +104,39 @@
    (t (message "Not in a TTN observation buffer"))))
 
 ;;;###autoload
-(transient-define-prefix ttn-menu ()
-  "TTN Network Menu"
-  ["Observation"
-   ("s" "Status (Evidence Ladder)" ttn-status)
-   ("h" "History (Audit Logs)"    ttn-history)
-   ("c" "Content (Storage State)" ttn-content)]
-  ["Infrastructure"
-   ("i" "Infra Status"           ttn-infra-status)
-   ("u" "Infra Up"               (lambda () (interactive) (compile (format "%s infra up --metrics" ttn-bin))))
-   ("d" "Infra Down"             (lambda () (interactive) (compile (format "%s infra down" ttn-bin))))]
-  ["Management"
-   ("l" "List Identities"        (lambda () (interactive) (compile (format "%s identity list" ttn-bin))))
-   ("v" "Services List"          (lambda () (interactive) (compile (format "%s services list" ttn-bin))))])
+(defun ttn-menu ()
+  "Prompt for a TTN action without using transient side windows."
+  (interactive)
+  (let* ((choices '(("Status" . ttn-status)
+                    ("History" . ttn-history)
+                    ("Content" . ttn-content)
+                    ("Infra Status" . ttn-infra-status)
+                    ("Infra Up" . ttn-infra-up)
+                    ("Infra Down" . ttn-infra-down)
+                    ("List Identities" . ttn-identity-list)
+                    ("Services List" . ttn-services-list)))
+         (selection (completing-read "TTN: " (mapcar #'car choices) nil t)))
+    (when-let ((command (cdr (assoc selection choices))))
+      (call-interactively command))))
+
+(defun ttn-infra-up ()
+  "Run `ttn infra up --metrics'."
+  (interactive)
+  (compile (format "%s infra up --metrics" ttn-bin)))
+
+(defun ttn-infra-down ()
+  "Run `ttn infra down'."
+  (interactive)
+  (compile (format "%s infra down" ttn-bin)))
+
+(defun ttn-identity-list ()
+  "Run `ttn identity list'."
+  (interactive)
+  (compile (format "%s identity list" ttn-bin)))
+
+(defun ttn-services-list ()
+  "Run `ttn services list'."
+  (interactive)
+  (compile (format "%s services list" ttn-bin)))
 
 (provide 'ttn-observe)

@@ -46,73 +46,19 @@
 ;;; frame positions dependent on what system we are actually displaying on
 ;;;
 
-(when (display-graphic-p)
-  (let ((remote_node
-         (let ((node (getenv "SSH_CONNECTION")))
-           (if (stringp node)
-               (car (split-string node))
-             "")))
-        (rubr      "192.168.1.6" )
-        (skoos-pro "192.168.1.93"))
-    (cond
-     ((and (string-equal system-name "zot")
-           (string-equal remote_node ""))
-        (message "zot, local")
-        (setq initial-frame-alist
-              '((top   .   0) (left   .    0)
-                (width . 100) (height .   50)))
-        (setq default-frame-alist
-              '((top .     0) (left   . 1000)
-                (width . 115) (height .   58)))
-        (set-frame-size (selected-frame) 100 50))
+;; Keep frame geometry simple and daemon-safe. New GUI client frames inherit
+;; these defaults when created via emacsclient.
+(setq initial-frame-alist
+      '((width . 110) (height . 40)))
+(setq default-frame-alist
+      '((width . 110) (height . 40)))
 
-     ((or (string-equal system-name "rubr.priv")
-          (string-equal remote_node rubr))
-        (message "rubr: %s %s" system-name rubr)
-        (setq initial-frame-alist
-              '((top   .   0) (left   . 1100)
-                (width . 160) (height .   74)))
-        (setq default-frame-alist
-              '((top .     0) (left   . 1600)
-                (width . 115) (height .   58)))
-        (set-frame-size (selected-frame) 160 74))
+(defun dan-size-gui-client-frame (frame)
+  "Force sane geometry for daemon-created graphical FRAMEs."
+  (when (display-graphic-p frame)
+    (set-frame-size frame 110 40)))
 
-     ((string-equal remote_node skoos-pro)
-        (message "skoos-pro")
-        (setq initial-frame-alist
-              '((top   .   0) (left   .    0)
-                (width . 100) (height .   50)))
-        (setq default-frame-alist
-              '((top .     0) (left   .  780)
-                (width . 110) (height .   58)))
-        (set-frame-size (selected-frame) 100 50))
-
-     (t  ; default for unrecognized hosts — detect primary monitor
-        (message "default frame: %s" system-name)
-        (let* ((primary (shell-command-to-string
-                         "xrandr | grep ' connected primary' | grep -oP '\\d+x\\d+\\+\\d+\\+\\d+'"))
-               (parts (and (> (length primary) 0)
-                           (split-string (string-trim primary) "[x+]")))
-               (mon-w   (if parts (string-to-number (nth 0 parts)) (display-pixel-width)))
-               (mon-h   (if parts (string-to-number (nth 1 parts)) (display-pixel-height)))
-               (mon-x   (if parts (string-to-number (nth 2 parts)) 0))
-               (mon-y   (if parts (string-to-number (nth 3 parts)) 0))
-               (char-w  (frame-char-width))
-               (char-h  (frame-char-height))
-               (max-cols (/ mon-w char-w))
-               (max-rows (/ mon-h char-h))
-               (init-w (min 120 (- max-cols 4)))
-               (init-h (min 40  (- max-rows 4)))
-               (def-w  (min 110 (- max-cols 4)))
-               (def-h  (min 40  (- max-rows 4))))
-          (setq initial-frame-alist
-                `((top   . ,mon-y) (left   . ,mon-x)
-                  (width . ,init-w) (height . ,init-h)))
-          (setq default-frame-alist
-                `((top . ,mon-y) (left   . ,mon-x)
-                  (width . ,def-w) (height . ,def-h)))
-          (set-frame-size (selected-frame) init-w init-h)
-          (set-frame-position (selected-frame) mon-x mon-y))))))
+(add-hook 'after-make-frame-functions #'dan-size-gui-client-frame)
 
 ;;;(set-frame-font "-adobe-courier-medium-r-normal--14-180-75-75-m-110-iso8859-1")
 

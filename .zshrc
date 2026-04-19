@@ -73,12 +73,6 @@ fi
 # Cargo/Rust
 [[ -f "$HOME/.cargo/env" ]] && source "$HOME/.cargo/env"
 
-# Start Emacs daemon if not running (and not inside Emacs)
-if [[ -z "$INSIDE_EMACS" ]]; then
-  if ! pgrep -f "emacs --daemon" > /dev/null 2>&1; then
-    emacs --daemon 2>/dev/null &
-  fi
-fi
 
 # Local zsh customizations
 [[ -f "$HOME/.zshrc.local" ]] && source "$HOME/.zshrc.local"

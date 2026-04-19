@@ -80,7 +80,9 @@ Create `~/.gitconfig.local` for machine-specific git settings:
 ## Shell Features
 
 ### Aliases
-- `e` - Open in emacsclient
+- `e` - Open standalone Emacs GUI
+- `ec` - Open standalone Emacs GUI
+- `et` - Open terminal Emacs (`emacs -nw`)
 - `gs` - Git status
 - `ll` - Detailed file listing
 - `mkd` - Make directory and cd into it
@@ -90,7 +92,14 @@ Create `~/.gitconfig.local` for machine-specific git settings:
 - `extract` - Extract any archive
 - `backup` - Quick file backup with timestamp
 - `git-cleanup` - Remove merged branches
-- `emacs-daemon-*` - Manage Emacs daemon
+
+### Emacs Note
+On this Linux/Wayland setup, the Emacs daemon and `emacsclient -c` path is currently disabled because GUI client frames were unstable:
+- tiny startup windows
+- daemon restarts/crashes during normal GUI use
+- TTN observe buffers interacting badly with daemon-backed GUI frames
+
+The current stable baseline is standalone Emacs for GUI (`e`, `ec`) and `emacs -nw` for terminal (`et`). Re-enable the daemon only after confirming a concrete need and a stable client path.
 
 ## Emacs Integration
 
@@ -117,7 +126,7 @@ The configuration includes:
 
 ### Linux
 - Bash 4.0+ or Zsh 5.0+
-- Emacs 27+ with `emacsclient`
+- Emacs 27+
 - Git 2.20+
 
 ## Installation Details

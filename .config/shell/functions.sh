@@ -1,39 +1,48 @@
 #!/usr/bin/env bash
 # Shared functions for bash/zsh
 
-# Emacs daemon management
+# Emacs launch helpers
 emacs-daemon-status() {
-    if pgrep -f "emacs --daemon" > /dev/null; then
-        echo "✅ Emacs daemon is running (PID: $(pgrep -f 'emacs --daemon'))"
-        return 0
-    else
-        echo "❌ Emacs daemon is not running"
-        return 1
-    fi
+    echo "Emacs daemon is disabled"
+    return 1
 }
 
 emacs-daemon-start() {
-    if emacs-daemon-status > /dev/null 2>&1; then
-        echo "Emacs daemon already running"
-    else
-        echo "Starting Emacs daemon..."
-        emacs --daemon 2>/dev/null
-        sleep 1
-        emacs-daemon-status
-    fi
+    echo "Emacs daemon is disabled"
+    return 1
 }
 
 emacs-daemon-stop() {
-    echo "Stopping Emacs daemon..."
-    emacsclient -e '(save-buffers-kill-emacs)' 2>/dev/null || pkill -f "emacs --daemon"
-    sleep 1
-    emacs-daemon-status
+    echo "Emacs daemon is disabled"
+    return 1
 }
 
 emacs-daemon-restart() {
-    emacs-daemon-stop
-    sleep 1
-    emacs-daemon-start
+    echo "Emacs daemon is disabled"
+    return 1
+}
+
+emacs-daemon-recover() {
+    echo "Emacs daemon is disabled"
+    return 1
+}
+
+emacs-client-open() {
+    if [[ "$1" == "-t" ]]; then
+        shift
+        emacs -nw "$@"
+    else
+        emacs "$@"
+    fi
+}
+
+emacs-gui-open() {
+    if [[ -n "${DISPLAY:-}${WAYLAND_DISPLAY:-}" ]]; then
+        emacs "$@" >/dev/null 2>&1 &
+        disown
+    else
+        emacs-client-open -t "$@"
+    fi
 }
 
 # Create directory and cd into it
@@ -100,7 +109,7 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
     finder() {
         open "${1:-.}"
     }
-    
+
     # Empty the Trash
     emptytrash() {
         rm -rf ~/.Trash/*

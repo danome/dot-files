@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.1.1] - 2026-04-19
+
+### Changed
+- Disabled the user Emacs daemon workflow on Linux/Wayland and switched shell helpers to standalone Emacs for GUI sessions
+- Updated shell aliases so `e` and `ec` open standalone Emacs, while `et` uses `emacs -nw`
+
+### Notes
+- This change was made after repeated instability with daemon-backed GUI frames, including tiny startup windows and daemon crashes while using TTN observe buffers
+- Re-enable `emacsclient` only after confirming a real need and a stable GUI client path
 ## [2.1.0] - 2026-04-18
 
 ### Added
