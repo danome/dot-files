@@ -1,5 +1,13 @@
 ;;; ttn-observe.el --- TTN Network Observation for Emacs -*- lexical-binding: t; -*-
 
+;; Version: 0.1.0 (based on ttn-docs 0.1.0)
+;; URL: https://github.com/danome/dot-files
+;; Keywords: tools, network
+
+;;; Commentary:
+;; This file provides Emacs integration for the ttn binary.
+;; It loosely refers to ttn-docs for version tracking purposes.
+
 (require 'transient nil t)
 
 (defgroup ttn-observe nil

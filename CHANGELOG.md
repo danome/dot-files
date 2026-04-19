@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.1.0] - 2026-04-18
+
+### Added
+- TTN Network Observation integration for Emacs (`ttn-observe.el`)
+- Versioned support for `ttn` binary (v0.1.0, tracking `ttn-docs` 0.1.0)
+- New `C-c t t` keybinding for the TTN menu
+
 ## [2.0.0] - 2025-01-04
 
 ### Added

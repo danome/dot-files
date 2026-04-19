@@ -899,5 +899,6 @@ blockquote { border-left: 3px solid #ccc; margin-left: 0; padding-left: 20px; co
 
 
 ;; TTN Observation Integration
+;; Version: 0.1.0 (based on ttn-docs 0.1.0)
 (require 'ttn-observe)
 (global-set-key (kbd "C-c t t") #'ttn-menu)
