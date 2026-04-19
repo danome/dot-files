@@ -116,7 +116,7 @@
 
 ;;;(set-frame-font "-adobe-courier-medium-r-normal--14-180-75-75-m-110-iso8859-1")
 
-(setq load-path (append (list "~/.emacs.d/lib") load-path))
+(setq load-path (append (list "~/.emacs.d/lib" "~/.emacs.d/lisp") load-path))
 (load "misc")
 (load "uniquify")
 (setq uniquify-buffer-name-style 'forward)
@@ -897,3 +897,7 @@ blockquote { border-left: 3px solid #ccc; margin-left: 0; padding-left: 20px; co
  ;; Use environment variable for API key - DO NOT hardcode!
  (setq gptel-api-key (getenv "OPENAI_API_KEY")))
 
+
+;; TTN Observation Integration
+(require 'ttn-observe)
+(global-set-key (kbd "C-c t t") #'ttn-menu)
