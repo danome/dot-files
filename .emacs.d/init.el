@@ -53,13 +53,6 @@
 (setq default-frame-alist
       '((width . 110) (height . 40)))
 
-(defun dan-size-gui-client-frame (frame)
-  "Force sane geometry for daemon-created graphical FRAMEs."
-  (when (display-graphic-p frame)
-    (set-frame-size frame 110 40)))
-
-(add-hook 'after-make-frame-functions #'dan-size-gui-client-frame)
-
 ;;;(set-frame-font "-adobe-courier-medium-r-normal--14-180-75-75-m-110-iso8859-1")
 
 (setq load-path (append (list "~/.emacs.d/lib" "~/.emacs.d/lisp") load-path))
