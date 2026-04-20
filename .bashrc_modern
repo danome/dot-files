@@ -73,3 +73,4 @@ fi
 
 # Local bash customizations
 [[ -f "$HOME/.bashrc.local" ]] && source "$HOME/.bashrc.local"
+export TMPDIR="$HOME/.cache/ttn-test-tmp"

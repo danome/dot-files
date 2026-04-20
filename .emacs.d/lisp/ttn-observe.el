@@ -105,19 +105,19 @@
 
 ;;;###autoload
 (defun ttn-menu ()
-  "Prompt for a TTN action without using transient side windows."
+  "Dispatch a TTN action without using transient side windows."
   (interactive)
-  (let* ((choices '(("Status" . ttn-status)
-                    ("History" . ttn-history)
-                    ("Content" . ttn-content)
-                    ("Infra Status" . ttn-infra-status)
-                    ("Infra Up" . ttn-infra-up)
-                    ("Infra Down" . ttn-infra-down)
-                    ("List Identities" . ttn-identity-list)
-                    ("Services List" . ttn-services-list)))
-         (selection (completing-read "TTN: " (mapcar #'car choices) nil t)))
-    (when-let ((command (cdr (assoc selection choices))))
-      (call-interactively command))))
+  (pcase (read-char-choice
+          "TTN: [s]tatus [h]istory [c]ontent [i]nfra [u]p [d]own [l]ist-identities ser[v]ices "
+          '(?s ?h ?c ?i ?u ?d ?l ?v))
+    (?s (call-interactively #'ttn-status))
+    (?h (call-interactively #'ttn-history))
+    (?c (call-interactively #'ttn-content))
+    (?i (call-interactively #'ttn-infra-status))
+    (?u (call-interactively #'ttn-infra-up))
+    (?d (call-interactively #'ttn-infra-down))
+    (?l (call-interactively #'ttn-identity-list))
+    (?v (call-interactively #'ttn-services-list))))
 
 (defun ttn-infra-up ()
   "Run `ttn infra up --metrics'."
