@@ -36,6 +36,10 @@ CONFIG_DIRS=(
     ".config/kitty"
 )
 
+DESKTOP_FILES=(
+    ".local/share/applications/emacsclient.desktop"
+)
+
 echo -e "${GREEN}=== Dot-files Installation ===${NC}"
 echo "Source: $DOTFILES_DIR"
 echo "Backup: $BACKUP_DIR"
@@ -112,6 +116,12 @@ done
 
 echo -e "\n${GREEN}Installing Emacs configuration...${NC}"
 for file in "${EMACS_FILES[@]}"; do
+    backup_and_link "$file" "$file"
+done
+
+echo -e "\n${GREEN}Installing desktop launchers...${NC}"
+for file in "${DESKTOP_FILES[@]}"; do
+    mkdir -p "$HOME/$(dirname "$file")"
     backup_and_link "$file" "$file"
 done
 

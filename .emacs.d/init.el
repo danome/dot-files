@@ -46,12 +46,44 @@
 ;;; frame positions dependent on what system we are actually displaying on
 ;;;
 
-;; Keep frame geometry simple and daemon-safe. New GUI client frames inherit
-;; these defaults when created via emacsclient.
+;; Frame geometry. early-init.el sets default-frame-alist before the first
+;; frame; we keep it in sync here (with font) so new frames created later
+;; (emacsclient -c, C-x 5 2) inherit the same geometry.
 (setq initial-frame-alist
-      '((width . 110) (height . 40)))
+      '((width . 110) (height . 40) (font . "Ubuntu Mono-16")))
 (setq default-frame-alist
-      '((width . 110) (height . 40)))
+      '((width . 110) (height . 40) (font . "Ubuntu Mono-16")))
+
+;; After the first GUI frame is correctly sized, cache its pixel dimensions.
+;; Subsequent frames (emacsclient -n -c) reuse those exact pixels, bypassing
+;; the font-metric timing race: char-unit resize works only after the font is
+;; applied to the frame, which isn't guaranteed when the idle timer fires on
+;; an already-idle daemon.
+(defvar dan--gui-frame-pixel-size nil)
+
+(defun dan--set-frame-size (frame)
+  "Size FRAME to standard dimensions, using cached pixels when available."
+  (when (frame-live-p frame)
+    (if dan--gui-frame-pixel-size
+        (set-frame-size frame (car dan--gui-frame-pixel-size)
+                        (cdr dan--gui-frame-pixel-size) t)
+      (set-frame-size frame 110 40)
+      (setq dan--gui-frame-pixel-size
+            (cons (frame-pixel-width frame) (frame-pixel-height frame))))))
+
+;; window-setup-hook: sizes the initial standalone Emacs frame after full init.
+(add-hook 'window-setup-hook
+          (lambda ()
+            (when (display-graphic-p)
+              (dan--set-frame-size (selected-frame)))))
+
+;; after-make-frame-functions: sizes daemon client frames (emacsclient -n -c).
+;; Defer via idle timer so Emacs processes the new frame's display events
+;; before we resize; on a cold daemon the font won't be applied yet at hook time.
+(add-hook 'after-make-frame-functions
+          (lambda (frame)
+            (when (display-graphic-p frame)
+              (run-with-idle-timer 0 nil #'dan--set-frame-size frame))))
 
 ;;;(set-frame-font "-adobe-courier-medium-r-normal--14-180-75-75-m-110-iso8859-1")
 

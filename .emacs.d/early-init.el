@@ -8,6 +8,13 @@
 (when (fboundp 'tool-bar-mode) (tool-bar-mode -1))
 (when (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
 
+;; Set font, size, and resize policy before the first frame is shown.
+;; Font must be here so char dimensions are stable when the frame is created,
+;; preventing the startup jump caused by init.el's font load shifting the size.
+(setq frame-resize-pixelwise t)
+(setq default-frame-alist
+      '((width . 110) (height . 40) (font . "Ubuntu Mono-16")))
+
 ;; No splash screen
 (setq inhibit-startup-screen t)
 (setq inhibit-startup-message t)
