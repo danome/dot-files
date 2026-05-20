@@ -55,7 +55,11 @@ export LESSHISTFILE=-
 export PAGER="${PAGER:-less}"
 
 # Rust defaults
-export CARGO_TARGET_DIR="${CARGO_TARGET_DIR:-/tmp/rust-target}"
+# Do NOT set a global CARGO_TARGET_DIR. The retired /tmp/rust-target value is an
+# anti-pattern: it forces every project onto one shared target dir. TTN tooling
+# (ttn-build / ttn-pytest) computes a per-session dir (.target/rust-targets/<id>)
+# and now hard-rejects the legacy shared path; ordinary cargo projects default to
+# their own ./target. Removed 2026-05-20.
 export CARGO_INCREMENTAL="${CARGO_INCREMENTAL:-0}"
 export CARGO_BUILD_JOBS="${CARGO_BUILD_JOBS:-3}"
 
