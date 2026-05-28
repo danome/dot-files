@@ -1,1 +1,1 @@
-/home/danome/development/repositories/ttn/ttn-docs/guides/ai_dev_workflow_pack/ai-dev-emacs-claude-config/config/emacs/.emacs.d/lisp/ttn-observe.el
+/home/danome/development/repositories/ttn/ttn-emacs/lisp/ttn-observe.el
