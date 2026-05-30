@@ -97,3 +97,7 @@ temp/
 *.bak
 *.backup
 *.cache
+
+# TTN pre-commit hook diagnostic artifacts
+# (auto-written by the TTN hook framework on every commit; pure forensic trails)
+.scratch/
