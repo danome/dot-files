@@ -271,7 +271,9 @@
 ;;; (add-hook 'magit-mode-hook 'turn-on-magit-gitflow)
 
 (setq magit-repository-directories
-      `((,(expand-file-name "~/development/repositories") . 3)))
+      `((,(expand-file-name "~/development/repositories/ttn") . 2)
+        (,(expand-file-name "~/development/repositories/dot-files") . 0)
+        (,(expand-file-name "~/development/repositories/projects") . 2)))
 
 (setq magit-repolist-columns
       '(("Name"    25 magit-repolist-column-ident nil)
