@@ -18,3 +18,6 @@ export XDG_DATA_HOME="${XDG_DATA_HOME:-$HOME/.local/share}"
 [[ -d "$XDG_CONFIG_HOME" ]] || mkdir -p "$XDG_CONFIG_HOME"
 [[ -d "$XDG_CACHE_HOME" ]] || mkdir -p "$XDG_CACHE_HOME"
 [[ -d "$XDG_DATA_HOME" ]] || mkdir -p "$XDG_DATA_HOME"
+
+# Added by Antigravity CLI installer
+export PATH="/home/danome/.local/bin:$PATH"

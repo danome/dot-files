@@ -86,3 +86,6 @@ export LSCOLORS=ExFxBxDxCxegedabagacad
 if ! command -v starship &> /dev/null; then
   PROMPT='%F{green}%n@%m%f:%F{blue}%~%f$ '
 fi
+
+# Added by Antigravity CLI installer
+export PATH="/home/danome/.local/bin:$PATH"
