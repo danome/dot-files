@@ -271,7 +271,15 @@
 ;;; (add-hook 'magit-mode-hook 'turn-on-magit-gitflow)
 
 (setq magit-repository-directories
-      `((,(expand-file-name "~/development/repositories/ttn") . 2)
+      `(,@(mapcan
+           (lambda (directory)
+             ;; Accept both normal repositories and worktrees (.git files).
+             (when (and (file-directory-p directory)
+                        (file-exists-p (expand-file-name ".git" directory)))
+               (list (cons directory 0))))
+           (directory-files
+            (expand-file-name "~/development/repositories/ttn")
+            t directory-files-no-dot-files-regexp))
         (,(expand-file-name "~/development/repositories/dot-files") . 0)
         (,(expand-file-name "~/development/repositories/projects") . 2)))
 
