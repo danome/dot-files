@@ -883,3 +883,218 @@ blockquote { border-left: 3px solid #ccc; margin-left: 0; padding-left: 20px; co
 ;; Version: 0.1.0 (based on ttn-docs 0.1.0)
 (require 'ttn-observe)
 (global-set-key (kbd "C-c t t") #'ttn-menu)
+
+;; TTN Magit Integration: `refs/ttn-pinned/*', `refs/ttn-staging/*', and `ttn-worktrees'
+(defvar dan/ttn-canonical-root (expand-file-name "~/development/repositories/ttn")
+  "Canonical TTN workspace root.")
+
+(defvar dan/ttn-worktrees-root (expand-file-name "~/development/repositories/ttn-worktrees")
+  "Session forest root provisioned by `ttn-harness-jail.sh'.")
+
+(defun dan/ttn-worktree-head-branch (repo-dir)
+  "Return non-main branch or detached HEAD for REPO-DIR via pure file read, or nil."
+  (let ((head-file (expand-file-name ".git/HEAD" repo-dir)))
+    (when (file-readable-p head-file)
+      (with-temp-buffer
+        (insert-file-contents head-file nil 0 256)
+        (let ((s (string-trim (buffer-string))))
+          (cond
+           ((string= s "ref: refs/heads/main") nil)
+           ((string-prefix-p "ref: refs/heads/" s)
+            (substring s (length "ref: refs/heads/")))
+           ((not (string-empty-p s))
+            (concat "detached@" (substring s 0 (min 10 (length s)))))))))))
+
+(defun dan/ttn-main-index (&optional repo-dir)
+  "Return (SHAS TREES SUBJECTS) hash tables for `refs/heads/main' in REPO-DIR."
+  (let ((shas (make-hash-table :test 'equal))
+        (trees (make-hash-table :test 'equal))
+        (subjects (make-hash-table :test 'equal))
+        (default-directory (file-name-as-directory (or repo-dir (magit-toplevel)))))
+    (dolist (line (magit-git-lines "log" "refs/heads/main" "-n" "200" "--format=%H\t%h\t%T\t%s"))
+      (pcase-let ((`(,full ,short ,tree ,subj) (split-string line "\t")))
+        (puthash full short shas)
+        (unless (gethash tree trees)
+          (puthash tree short trees))
+        (unless (gethash subj subjects)
+          (puthash subj short subjects))))
+    (list shas trees subjects)))
+
+(defun dan/ttn-classify-commit (full short tree subj main-shas main-trees main-subjects)
+  "Return (PENDING-P . BADGE-STRING) comparing commit against main tables."
+  (cond
+   ((gethash full main-shas)
+    (cons nil (format "[on main %s]" short)))
+   ((gethash tree main-trees)
+    (cons nil (format "[landed -> %s]" (gethash tree main-trees))))
+   ((gethash subj main-subjects)
+    (cons nil (format "[superseded -> %s]" (gethash subj main-subjects))))
+   (t
+    (cons t "[UNLANDED]"))))
+
+(defun dan/magit-insert-ttn-refs ()
+  "Show `refs/ttn-pinned/*' and `refs/ttn-staging/*' classified against `main'."
+  (pcase-let ((`(,main-shas ,main-trees ,main-subjects) (dan/ttn-main-index)))
+    (dolist (ns '("refs/ttn-pinned" "refs/ttn-staging"))
+      (when-let ((lines (magit-git-lines
+                         "for-each-ref" "--sort=-committerdate"
+                         "--format=%(objectname)\t%(objectname:short)\t%(tree)\t%(refname:short)\t%(subject)"
+                         ns)))
+        (let ((pending nil)
+              (historical nil))
+          (dolist (line lines)
+            (pcase-let* ((`(,full ,sha ,tree ,ref ,subj) (split-string line "\t"))
+                         (short-ref (replace-regexp-in-string "^ttn-\\(pinned\\|staging\\)/" "" ref))
+                         (short-ref (if (string-match "^\\([^/]+\\)/[0-9a-f]\\{40\\}$" short-ref)
+                                        (match-string 1 short-ref)
+                                      short-ref))
+                         (`(,is-pending . ,badge)
+                          (dan/ttn-classify-commit full sha tree subj main-shas main-trees main-subjects)))
+              (if is-pending
+                  (push (list sha badge short-ref subj) pending)
+                (push (list sha badge short-ref subj) historical))))
+          (setq pending (nreverse pending)
+                historical (nreverse historical))
+          (magit-insert-section (ttn-refs ns)
+            (magit-insert-heading
+              (format "TTN Refs (%s: %d unlanded, %d already on main/superseded)"
+                      ns (length pending) (length historical)))
+            (if pending
+                (dolist (row pending)
+                  (pcase-let ((`(,sha ,badge ,sref ,subj) row))
+                    (magit-insert-section (commit sha)
+                      (insert (format "  %s %-18s %-30s %s\n"
+                                      (propertize sha 'face 'magit-hash)
+                                      (propertize badge 'face 'warning)
+                                      (propertize sref 'face 'magit-branch-local)
+                                      subj)))))
+              (insert (propertize "  (none pending — all pinned refs are already on main or superseded)\n"
+                                  'face 'magit-dimmed)))
+            (when historical
+              (magit-insert-section (ttn-refs-historical (concat ns "-hist") t)
+                (magit-insert-heading
+                  (propertize (format "  Historical / already on main (%d) [TAB to expand]" (length historical))
+                              'face 'magit-dimmed))
+                (dolist (row historical)
+                  (pcase-let ((`(,sha ,badge ,sref ,subj) row))
+                    (magit-insert-section (commit sha)
+                      (insert (format "    %s %-22s %-28s %s\n"
+                                      (propertize sha 'face 'magit-hash)
+                                      (propertize badge 'face 'magit-dimmed)
+                                      (propertize sref 'face 'magit-dimmed)
+                                      (propertize subj 'face 'magit-dimmed))))))))
+            (insert "\n")))))))
+
+(defun dan/ttn-worktree-summary (wt-repo session repo-name branch main-shas main-trees main-subjects)
+  "Return (ACTIVE-P SHA BADGE SUBJ) for WT-REPO compared against canonical `main'."
+  (let* ((default-directory (file-name-as-directory wt-repo))
+         (log-line (car (magit-git-lines "log" "-1" "--format=%H\t%h\t%T\t%s" "HEAD")))
+         (dirty (consp (magit-git-lines "status" "--porcelain" "--untracked-files=normal")))
+         (cand-dir (expand-file-name ".candidates" (expand-file-name session dan/ttn-worktrees-root)))
+         (exported (and (file-directory-p cand-dir)
+                        (directory-files cand-dir nil
+                                         (concat "^" (regexp-quote repo-name) "\\..*\\.candidate\\.json$")))))
+    (if (not log-line)
+        (list nil "-------" "[unknown]" "")
+      (pcase-let* ((`(,full ,sha ,tree ,subj) (split-string log-line "\t"))
+                   (`(,is-pending . ,badge)
+                    (dan/ttn-classify-commit full sha tree subj main-shas main-trees main-subjects))
+                   (flags (string-join
+                           (delq nil (list (when dirty "DIRTY")
+                                           (when exported (format "%d exported" (length exported)))))
+                           ", "))
+                   (flag-str (if (string-empty-p flags) "" (format " (%s)" flags))))
+        (list (or is-pending dirty) sha (concat badge flag-str) subj)))))
+
+(defun dan/magit-insert-ttn-worktrees ()
+  "Show active `ttn-worktrees/<session>/<repo>' clones classified against canonical `main'.
+Pressing RET on any row opens `magit-status' in that session worktree (or back
+to the canonical repository when viewing a session worktree)."
+  (when (file-directory-p dan/ttn-worktrees-root)
+    (let* ((topdir (directory-file-name (magit-toplevel)))
+           (true-top (file-truename topdir))
+           (repo-name (file-name-nondirectory topdir))
+           (canon-repo (expand-file-name repo-name dan/ttn-canonical-root))
+           (index-dir (if (file-directory-p canon-repo) canon-repo topdir))
+           (active nil)
+           (historical nil))
+      (pcase-let ((`(,main-shas ,main-trees ,main-subjects) (dan/ttn-main-index index-dir)))
+        (when (and (file-directory-p canon-repo)
+                   (not (string= (file-truename canon-repo) true-top)))
+          (push (list "canonical" "main" "HEAD" "[canonical checkout]" "RET to return to canonical repo" canon-repo) active))
+        (dolist (session-dir (directory-files dan/ttn-worktrees-root t "^[^.]"))
+          (let* ((session (file-name-nondirectory session-dir))
+                 (wt-repo (expand-file-name repo-name session-dir))
+                 (branch (and (file-directory-p wt-repo)
+                              (not (string= (file-truename wt-repo) true-top))
+                              (dan/ttn-worktree-head-branch wt-repo))))
+            (when branch
+              (pcase-let ((`(,active-p ,sha ,badge ,subj)
+                           (dan/ttn-worktree-summary wt-repo session repo-name branch
+                                                     main-shas main-trees main-subjects)))
+                (if active-p
+                    (push (list session branch sha badge subj wt-repo) active)
+                  (push (list session branch sha badge subj wt-repo) historical))))))
+        (when (or active historical)
+          (setq active (nreverse active)
+                historical (nreverse historical))
+          (magit-insert-section (ttn-worktrees repo-name)
+            (magit-insert-heading
+              (format "TTN Session Worktrees (%s: %d unlanded/dirty, %d already on main) [RET to open]"
+                      repo-name (length active) (length historical)))
+            (if active
+                (dolist (row active)
+                  (pcase-let ((`(,session ,branch ,sha ,badge ,subj ,wt-repo) row))
+                    (magit-insert-section (worktree wt-repo)
+                      (insert (format "  %-34s %-24s %s %-32s %s\n"
+                                      (propertize (concat session "/" repo-name) 'face 'magit-branch-remote)
+                                      (propertize branch 'face 'magit-branch-local)
+                                      (propertize sha 'face 'magit-hash)
+                                      (propertize badge 'face 'warning)
+                                      subj)))))
+              (insert (propertize "  (no unlanded or dirty worktrees for this repo)\n"
+                                  'face 'magit-dimmed)))
+            (when historical
+              (magit-insert-section (ttn-worktrees-historical (concat repo-name "-wt-hist") t)
+                (magit-insert-heading
+                  (propertize (format "  Historical / already on main (%d) [TAB to expand]" (length historical))
+                              'face 'magit-dimmed))
+                (dolist (row historical)
+                  (pcase-let ((`(,session ,branch ,sha ,badge ,subj ,wt-repo) row))
+                    (magit-insert-section (worktree wt-repo)
+                      (insert (format "    %-32s %-24s %s %-32s %s\n"
+                                      (propertize (concat session "/" repo-name) 'face 'magit-dimmed)
+                                      (propertize branch 'face 'magit-dimmed)
+                                      (propertize sha 'face 'magit-hash)
+                                      (propertize badge 'face 'magit-dimmed)
+                                      (propertize subj 'face 'magit-dimmed))))))))
+            (insert "\n")))))))
+
+(defun dan/ttn-magit-worktree-status ()
+  "Fuzzy-select an active `ttn-worktrees/<session>/<repo>' (non-main HEAD) and open `magit-status'."
+  (interactive)
+  (let ((choices nil))
+    (dolist (session-dir (directory-files dan/ttn-worktrees-root t "^[^.]"))
+      (when (file-directory-p session-dir)
+        (let ((session (file-name-nondirectory session-dir)))
+          (dolist (repo-dir (directory-files session-dir t "^[^.]"))
+            (when-let ((branch (and (file-directory-p repo-dir)
+                                    (dan/ttn-worktree-head-branch repo-dir))))
+              (let* ((repo (file-name-nondirectory repo-dir))
+                     (label (format "%s/%s [%s]" session repo branch)))
+                (push (cons label repo-dir) choices)))))))
+    (setq choices (nreverse choices))
+    (if (null choices)
+        (user-error "No non-main session worktrees found under %s" dan/ttn-worktrees-root)
+      (let* ((picked (completing-read "TTN worktree: " (mapcar #'car choices) nil t))
+             (target (cdr (assoc picked choices))))
+        (magit-status target)))))
+
+(global-set-key (kbd "C-c t w") #'dan/ttn-magit-worktree-status)
+
+(with-eval-after-load 'magit
+  (magit-add-section-hook 'magit-status-sections-hook
+                          #'dan/magit-insert-ttn-refs nil t)
+  (magit-add-section-hook 'magit-status-sections-hook
+                          #'dan/magit-insert-ttn-worktrees nil t)
+  (add-hook 'magit-refs-sections-hook #'dan/magit-insert-ttn-refs t))
